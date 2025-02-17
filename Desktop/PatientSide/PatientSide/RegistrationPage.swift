@@ -39,7 +39,8 @@ struct RegistrationPage: View {
         
         
         if self.isAdmin {
-           
+            self.showSuccessfullLoginDialog = true
+            return
         }
         
         
@@ -326,8 +327,16 @@ struct RegistrationPage: View {
                 .background(.gray.opacity(0.2))
             }
             .navigationDestination(isPresented: self.$showSuccessfullLoginDialog) {
-                ContentView(user: self.$user)
-                    .navigationBarBackButtonHidden()
+                if self.isAdmin {
+                    AddDoctorPage()
+                        .navigationBarBackButtonHidden()
+                    
+                    
+                }
+                if !self.isAdmin && !self.isDoctor {
+                    ContentView(user: self.$user)
+                        .navigationBarBackButtonHidden()
+                }
             }
         }
         
