@@ -55,14 +55,20 @@ struct SendUser {
 
 struct Doctor: Codable, Hashable {
     var doctorId: String
+    var hospitalName: String
     var fullName: String
+    var username: String
     var password: String
     var doctorName: String
     var hospitalId: String
+    var speciality: String
+    var medicalAcomplishment: String
 }
 
 struct Hospital: Codable, Hashable {
     var hospitalId: String
     var hospitalName: String
     var superadminId: String
+    var location: String
+    var speciality: String
 }
