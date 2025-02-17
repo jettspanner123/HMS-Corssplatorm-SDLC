@@ -60,7 +60,8 @@ struct SearchPage: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     
                     if self.currentSelectedFilter == "All" {
-                        
+                        AllFilterView()
+                            .padding(.top, 20)
                     } else if self.currentSelectedFilter == "Doctors" {
                         
                     } else if self.currentSelectedFilter == "Hospitls" {
@@ -79,39 +80,77 @@ struct SearchPage: View {
         
     }
 }
-//
-//struct AllFilterView: View {
-//    
-//    
-//    func getAllHospitals() {
-//        let database = Firestore.firestore()
-//        
-//        database.collection("hospitals").getDocuments() { (snapshot, error) in
-//            if let error = error {
-//                
-//            } else {
-//                for doc in snapshot!.documents {
-//                    let data = doc.data()
-//                    self.hospitalData.append(data)
-//                }
-//            }
-//        }
-//        
-//        print(self.hospitalData)
-//        
-//        print(hospitalData)
-//    }
-//    
-//    var body: some View {
-//        VStack {
-//            
-//        }
-//        .frame(maxWidth: .infinity)
-//        .onAppear {
-//            self.getAllHospitals()
-//        }
-//    }
-//}
+
+struct AllFilterView: View {
+    
+    let database = Firestore.firestore()
+    
+    @State private var isLoading: Bool = false
+    
+    @State private var hospitals: Array<Hospital> = []
+    
+    func fetchHospitals() {
+        self.isLoading = true
+       let database = Firestore.firestore()
+        
+        database.collection("hospitals").getDocuments() { (snapshot, error) in
+            if let error = error {
+                
+            }
+            
+            self.hospitals = snapshot?.documents.compactMap { doc in
+                let data = doc.data()
+                let id = doc.documentID
+                
+                let name = doc["hospitalName"] as! String
+                let superadminId = doc["superadminId"] as! String
+                return Hospital(hospitalId: id, hospitalName: name, superadminId: superadminId)
+                
+                
+            } ?? []
+            
+        }
+        
+        self.isLoading = false
+    }
+    
+    var body: some View {
+        VStack {
+            if self.isLoading {
+                ProgressView()
+                    .tint(.appOrange)
+            } else {
+                ForEach(self.hospitals, id: \.self) { hospital in
+                    NavigationLink(destination: HospitalScreen(hospitalId: hospital.hospitalId)) {
+                        HospitalCard(hospitalName: hospital.hospitalName)
+                    }
+                }
+            }
+            
+        }
+        .frame(maxWidth: .infinity)
+        .onAppear {
+            self.fetchHospitals()
+        }
+    }
+}
+
+
+struct HospitalCard: View {
+    var hospitalName: String
+    
+    var body: some View {
+        HStack {
+            Text(self.hospitalName)
+                .font(.system(size: 20, weight: .medium, design: .rounded))
+                .foregroundStyle(.black.opacity(0.5))
+        }
+        .frame(maxWidth: .infinity, minHeight: 100)
+        .background(.gray.opacity(0.2))
+        .clipShape(RoundedRectangle(cornerRadius: 15))
+        .shadow(radius: 1)
+    }
+}
 
 
 #Preview {
