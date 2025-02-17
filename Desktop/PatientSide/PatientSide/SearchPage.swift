@@ -138,9 +138,45 @@ struct DoctorFilterView: View {
 }
 
 struct HospitalFilterView: View {
+   
+    @State var hospitals: Array<Hospital> = []
+    
+    func fetchHospitals() {
+        
+        
+        let database = Firestore.firestore()
+        database.collection("hospitals").getDocuments() { (snapshot, error) in
+            if let _ = error {
+                
+            }
+            
+            self.hospitals = snapshot?.documents.compactMap { doc in
+                let data = doc.data()
+                let id = doc.documentID
+                
+                let name = data["hospitalName"] as? String
+                let superadminId = data["superadminId"] as? String
+                let location = data["location"] as? String
+                let speciality = data["speciality"] as? String
+                
+                return Hospital(hospitalId: id, hospitalName: name ?? "Neelam", superadminId: superadminId ?? "", location: location ?? "Patiala, Punjab", speciality: speciality ?? "Radiology")
+                
+                
+            } ?? []
+            
+        }
+
+    }
     var body: some View {
         VStack {
+            SectionHeading(text: "Hospitals")
             
+            ForEach(self.hospitals, id: \.self) { hospital in
+                HospitalCard(hospital: hospital)
+            }
+        }
+        .onAppear {
+            self.fetchHospitals()
         }
     }
 }
@@ -221,7 +257,7 @@ struct AllFilterView: View {
     }
     
     var body: some View {
-        VStack {
+        VStack(spacing: 10) {
             if self.isLoading {
                 ProgressView()
                     .tint(.appOrange)
@@ -294,6 +330,7 @@ struct HospitalCard: View {
             // MARK: Navigation arrow
             HStack(alignment: .top) {
                 Image(systemName: "arrow.right")
+                    .foregroundStyle(.secondaryAccent)
             }
             .frame(maxHeight: .infinity)
             .padding(.trailing, 10)
@@ -346,6 +383,7 @@ struct DoctorCard: View {
             // MARK: Navigation arrow
             HStack(alignment: .top) {
                 Image(systemName: "arrow.right")
+                    .foregroundStyle(.secondaryAccent)
             }
             .frame(maxHeight: .infinity)
             .padding(.trailing, 10)
