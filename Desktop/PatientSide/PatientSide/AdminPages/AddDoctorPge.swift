@@ -59,7 +59,7 @@ struct AddDoctorPage: View {
         let doctor = ["fullName": self.doctorFullName, "hospitalId": self.hospitalId, "hospitalName": self.hospitalName, "medicalAcomplishment": self.medicalAcomplishment, "password": self.calcPassword, "speciality": self.speciality, "username": self.username]
         
         docRef.setData(doctor){ error in
-            if let error = error {
+            if let _ = error {
                 self.errorMessage = "Requerst Timeout!"
                 self.errorDescription = "Server coult not respont. Try again later."
                 self.showErrorMessage = true
@@ -74,6 +74,8 @@ struct AddDoctorPage: View {
         self.isSubmitButtonClicked = false
         
     }
+    
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -133,6 +135,17 @@ struct AddDoctorPage: View {
             
             // MARK: Heading Text
             HStack(spacing: 15) {
+                
+                HStack {
+                    Image(systemName: "xmark")
+                }
+                .frame(maxWidth: 45, maxHeight: 45)
+                .background(.white)
+                .clipShape(Circle())
+                .shadow(radius: 1)
+                .onTapGesture {
+                    self.presentationMode.wrappedValue.dismiss()
+                }
                 
                 Text("Add Doctor")
                     .font(.system(size: 40, weight: .bold, design: .rounded))
