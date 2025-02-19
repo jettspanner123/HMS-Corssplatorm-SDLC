@@ -42,7 +42,6 @@ struct ProfilePage: View {
             ScrollView {
                 VStack() {
                     
-                    
                     // MARK: Profile heading
                     Text("Profile")
                         .font(.system(size: 40, weight: .medium , design: .rounded))

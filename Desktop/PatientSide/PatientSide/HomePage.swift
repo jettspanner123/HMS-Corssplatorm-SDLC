@@ -55,7 +55,7 @@ struct HomePage: View {
 struct AppointmentTabView: View {
     var body: some View {
         VStack {
-            ForEach(1...30, id: \.self) { _ in
+            ForEach(1...5, id: \.self) { _ in
                 HStack {
                    Text("Hello world")
                 }

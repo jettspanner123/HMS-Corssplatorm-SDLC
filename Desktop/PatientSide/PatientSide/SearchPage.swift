@@ -79,7 +79,7 @@ struct SearchPage: View {
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                    .padding(30)
+                    .padding(20)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

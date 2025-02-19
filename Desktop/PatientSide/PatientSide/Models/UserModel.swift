@@ -53,6 +53,15 @@ struct SendUser {
     var userType: String
 }
 
+struct SendAdmin {
+    var adminName: String
+    var hospitalId: String
+    var asminUsername: String
+    var password: String
+    var isSuperAdmin: Bool
+    var adminId: String
+}
+
 struct Doctor: Codable, Hashable {
     var doctorId: String
     var hospitalName: String

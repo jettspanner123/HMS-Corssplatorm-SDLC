@@ -27,6 +27,8 @@ struct ContentView: View {
     
     @Binding var user: SendUser
     
+    @Environment(\.presentationMode) var presentationMode
+    
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
@@ -44,13 +46,26 @@ struct ContentView: View {
                     }
                 }
                 
-                TabViewBar(selectedTab: $selectedTab)
-                    .offset(y: UIScreen.main.bounds.height - 180)
+                
+                HStack {
+                    TabViewBar(selectedTab: $selectedTab)
+                    
+                    HStack {
+                        Image(systemName: "xmark")
+                    }
+                    .frame(maxWidth: 65, maxHeight: 65)
+                    .background(.white)
+                    .clipShape(Circle())
+                    .shadow(radius: 1)
+                    .onTapGesture {
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
+                }
+                .offset(y: UIScreen.main.bounds.height - 180)
+
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(.gray.opacity(0.2))
         }
     }
 }
-
-

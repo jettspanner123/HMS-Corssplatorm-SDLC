@@ -24,8 +24,6 @@ func generateRandomPassword(length: Int = 10) -> String {
 
 struct AddDoctorPage: View {
     
-    
-    
     @State var doctorFullName: String = ""
     @State var username: String = ""
     @State var isSubmitButtonClicked: Bool = false
@@ -56,7 +54,7 @@ struct AddDoctorPage: View {
         let doctorId = UUID().uuidString
         
         let docRef = database.collection("doctors").document(doctorId)
-        let doctor = ["fullName": self.doctorFullName, "hospitalId": self.hospitalId, "hospitalName": self.hospitalName, "medicalAcomplishment": self.medicalAcomplishment, "password": self.calcPassword, "speciality": self.speciality, "username": self.username]
+        let doctor = ["fullName": self.doctorFullName, "hospitalId": self.hospitalId, "hospitalName": self.hospitalName, "medicalAcomplishment": self.medicalAcomplishment, "password": self.calcPassword, "speciality": self.speciality, "username": "doc#\(self.username)-2025", "doctorId": "\(self.calcPassword)"]
         
         docRef.setData(doctor){ error in
             if let _ = error {
@@ -79,7 +77,6 @@ struct AddDoctorPage: View {
     
     var body: some View {
         ZStack(alignment: .top) {
-            
             
             // MARK: Error Dialog Box
             if self.showErrorMessage {
@@ -157,9 +154,10 @@ struct AddDoctorPage: View {
             .padding(.bottom, 20)
             .padding(30)
             .zIndex(12)
-            .onTapGesture {
-            }
             
+            
+            
+            // MARK: Submit button
             HStack {
                 if self.isSubmitButtonClicked {
                     ProgressView()
