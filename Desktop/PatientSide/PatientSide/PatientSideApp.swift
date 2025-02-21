@@ -18,7 +18,7 @@ struct PatientSideApp: App {
     
     var body: some Scene {
         WindowGroup {
-            RegistrationPage()
+            AdminDashboard()
         }
         
     }

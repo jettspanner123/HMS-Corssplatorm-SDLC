@@ -1,9 +1,11 @@
 
 import Foundation
 
-enum UserRole {
-    case admin, superadmin, doctor, patient
-}
+
+
+
+
+
 
 enum UserRelation: String {
     case father, mother , sister, brother, daughter, son, uncle, aunt, friend
@@ -80,4 +82,36 @@ struct Hospital: Codable, Hashable {
     var superadminId: String
     var location: String
     var speciality: String
+}
+
+struct Remarks: Codable, Hashable {
+    var fromUserId: String
+    var fromUserName: String
+    var title: String
+    var description: String
+    var markAsRead: Bool
+}
+
+enum UserRole: Codable {
+    case admin, superadmin, doctor, patient
+}
+
+enum RequestType {
+    case update, delete, create, forgotPassword
+}
+
+enum RequestOption: String, CaseIterable, Identifiable {
+    case accepted , rejected , hold, pending
+    var id: String { rawValue }
+}
+
+
+struct Request: Hashable {
+    var fromUserId: String
+    var fromUserName: String
+    var fromUserType: UserRole
+    var requestTitle: String
+    var requestDescription: String
+    var requestStatus: RequestOption
+    var requestType: RequestType
 }

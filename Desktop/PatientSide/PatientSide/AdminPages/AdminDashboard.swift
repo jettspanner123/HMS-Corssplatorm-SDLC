@@ -10,6 +10,7 @@ import SwiftUI
 struct AdminDashboard: View {
     
     @State var selectedTab: Int = 0
+    @State var headerOffset: CGFloat = 0
     
     var body: some View {
         NavigationStack {
@@ -26,6 +27,7 @@ struct AdminDashboard: View {
                 .offset(y: -15)
                 .zIndex(11)
                 
+                
                 PageHeader(selectedTab: self.$selectedTab)
                     .zIndex(12)
                 
@@ -39,7 +41,7 @@ struct AdminDashboard: View {
                         
                     }
                 }
-                
+               
                 
                 AdminTabViewBar(selectedTab: self.$selectedTab)
                     .offset(y: UIScreen.main.bounds.height - 180)
@@ -54,8 +56,16 @@ struct AdminDashboard: View {
                 .offset(y: UIScreen.main.bounds.height - 140)
                 
             }
-            .background(.appBackground)
+            .background(.gray.opacity(0.3))
         }
+    }
+}
+
+struct ScrollViewOffsetPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
     }
 }
 
@@ -65,35 +75,36 @@ struct PageHeader: View {
     @Binding var selectedTab: Int
     
     var body: some View {
-        HStack {
-            Text("Home")
-                .font(.system(size: 32, weight: .bold, design: .rounded))
-                .foregroundStyle(.secondaryAccent)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
+        GeometryReader { proxy in
             HStack {
-                HStack {
-                    Image(systemName: "person.fill")
-                        .resizable()
-                        .frame(maxWidth: 20, maxHeight: 20)
-                }
-                .frame(maxWidth: 55, maxHeight: 55)
-                .background(.white)
-                .clipShape(Circle())
-                .shadow(radius: 1)
+                Text(self.selectedTab == 0 ? "Home" : self.selectedTab == 1 ? "Patients" : self.selectedTab == 2 ? "Doctors" : "Settings")
+                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                    .foregroundStyle(.secondaryAccent.gradient)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 
                 HStack {
-                    Image(systemName: "bell")
+                    HStack {
+                        Image(systemName: "person.fill")
+                            .resizable()
+                            .frame(maxWidth: 20, maxHeight: 20)
+                    }
+                    .frame(maxWidth: 55, maxHeight: 55)
+                    .background(.white)
+                    .clipShape(Circle())
+                    .shadow(radius: 1)
+                    
+                    HStack {
+                        Image(systemName: "bell")
+                    }
+                    .frame(maxWidth: 55, maxHeight: 55)
+                    .background(.white)
+                    .clipShape(Circle())
+                    .shadow(radius: 1)
                 }
-                .frame(maxWidth: 55, maxHeight: 55)
-                .background(.white)
-                .clipShape(Circle())
-                .shadow(radius: 1)
             }
+            .padding(.horizontal, 30)
+            .padding(.top, 20)
         }
-        .padding(.horizontal, 30)
-        .padding(.top, 20)
-        
     }
     
 }

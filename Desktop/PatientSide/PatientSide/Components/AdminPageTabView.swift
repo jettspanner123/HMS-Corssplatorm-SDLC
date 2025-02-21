@@ -24,9 +24,7 @@ struct AdminTabViewBar: View {
                 .background(selectedTab == index ? .secondaryAccent : .clear)
                 .clipShape(Circle())
                 .onTapGesture {
-                    withAnimation(.smooth(duration: 0.2)) {
-                        selectedTab = index
-                    }
+                    selectedTab = index
                 }
             }
         }
