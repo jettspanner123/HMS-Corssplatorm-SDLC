@@ -90,7 +90,9 @@ struct AdminDashboardHomePage: View {
                         InformationCard(iconsName: "person.fill", title: "Patients", color: .appOrange, textColor: .white, infoText: 33)
                         
                         // MARK: Available Beds ( with percentage )
-                        InformationCard(iconsName: "stethoscope", title: "Doctors", color: .white, textColor: .appOrange, infoText: 33)
+                        NavigationLink(destination: AvailableDoctorsPage()) {
+                            InformationCard(iconsName: "stethoscope", title: "Doctors", color: .white, textColor: .appOrange, infoText: 33)
+                        }
                         
                         // MARK: Doctors Available ( with percentage )
                         NavigationLink(destination: RequestsPage()) {

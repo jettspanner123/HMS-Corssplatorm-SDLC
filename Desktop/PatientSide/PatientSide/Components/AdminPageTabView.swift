@@ -29,7 +29,7 @@ struct AdminTabViewBar: View {
             }
         }
         .padding(8)
-        .background(.white)
+        .background(.white.gradient)
         .clipShape(Capsule())
         .shadow(radius: 1)
     }

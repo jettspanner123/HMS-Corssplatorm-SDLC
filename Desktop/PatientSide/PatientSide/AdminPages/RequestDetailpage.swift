@@ -1,14 +1,15 @@
 //
-//  RemarkDetailView.swift
+//  RequestDetailpage.swift
 //  PatientSide
 //
 //  Created by Uddeshya Singh on 21/02/25.
 //
 
 import SwiftUI
-struct RemarkDetailView: View {
+
+struct RequestDetailPage: View {
     
-    var remark: Remarks
+    var request: Request
     var body: some View {
         ZStack(alignment: .top) {
             
@@ -38,7 +39,7 @@ struct RemarkDetailView: View {
                     
                     HStack(spacing: 15) {
                         
-                        Text(getInitials(name: self.remark.fromUserName))
+                        Text(getInitials(name: self.request.fromUserName))
                             .font(.system(size: 15, weight: .bold, design: .rounded))
                             .foregroundStyle(.white)
                             .padding(15)
@@ -47,10 +48,10 @@ struct RemarkDetailView: View {
                             .shadow(radius: 1)
                         
                         VStack(alignment: .leading, spacing: 0) {
-                            Text(self.remark.fromUserName)
+                            Text(self.request.fromUserName)
                                 .font(.system(size: 15, weight: .medium, design: .rounded))
                             
-                            Text(self.remark.fromUserId)
+                            Text(self.request.fromUserId)
                                 .foregroundStyle(.black.opacity(0.5))
                             
                         }
@@ -75,7 +76,7 @@ struct RemarkDetailView: View {
                         .padding(.top, 20)
                     
                     // MARK: Remar title
-                    Text(self.remark.title)
+                    Text(self.request.requestTitle)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(15)
                         .background(.white.gradient)
@@ -87,7 +88,8 @@ struct RemarkDetailView: View {
                     SectionHeading(text: "Remark Description")
                         .padding(.top, 20)
                     
-                    Text(self.remark.description)
+                    Text(self.request.requestDescription)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(15)
                         .background(.white.gradient)
                         .clipShape(RoundedRectangle(cornerRadius: 15))
@@ -98,24 +100,56 @@ struct RemarkDetailView: View {
                 
             }
             
-            
-            // MARK: Mark as viewed button
-            
             HStack {
-                Text(self.remark.markAsRead ? "Mark Unread" : "Mark Read")
-                    .font(.system(size: 15, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
+                
+                
+                // MARK: Accept Button
+                HStack {
+                    Image(systemName: "checkmark")
+                        .foregroundStyle(.white)
+                }
+                .frame(maxWidth: 65, maxHeight: 65)
+                .background(.green.opacity(0.45).gradient)
+                .clipShape(Circle())
+                .shadow(radius: 1)
+                
+                
+                // MARK: Reject button
+                HStack {
+                    Image(systemName: "xmark")
+                        .foregroundStyle(.white)
+                }
+                .frame(maxWidth: 65, maxHeight: 65)
+                .background(.red.opacity(0.5).gradient)
+                .clipShape(Circle())
+                .shadow(radius: 1)
+                
+                // MARK: Hold button
+                HStack {
+                    Image(systemName: "hand.raised")
+                        .foregroundStyle(.white)
+                }
+                .frame(maxWidth: 65, maxHeight: 65)
+                .background(.orange.opacity(0.5).gradient)
+                .clipShape(Circle())
+                .shadow(radius: 1)
+                
+                // MARK: In Progress button
+                HStack {
+                    Image(systemName: "progress.indicator")
+                        .foregroundStyle(.white)
+                }
+                .frame(maxWidth: 65, maxHeight: 65)
+                .background(.gray.opacity(0.5).gradient)
+                .clipShape(Circle())
+                .shadow(radius: 1)
+                
             }
-            .frame(maxWidth: .infinity)
-            .frame(height: 55)
-            .background(.appOrange.gradient)
-            .clipShape(RoundedRectangle(cornerRadius: 15))
+            .padding(8)
+            .background(.white.gradient)
+            .clipShape(Capsule())
             .shadow(radius: 1)
-            .padding(.horizontal, 25)
             .offset(y: UIScreen.main.bounds.height - 180)
-            .zIndex(10)
-            .onTapGesture {
-            }
             
         }
         .background(.gray.opacity(0.3))
