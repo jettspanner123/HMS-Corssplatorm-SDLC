@@ -13,6 +13,7 @@ struct SearchPage: View {
     //    @Binding var showSettingPage: Bool
     
     @State var searchText: String = ""
+    @State var isSearching: Bool = false
     @State var currentSelectedFilter: String = "Doctors"
     var filterOptions: Array<String> = ["All", "Doctors", "Hospitals", "Clinics"]
     
@@ -20,73 +21,81 @@ struct SearchPage: View {
     @Binding var user: SendUser
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                ScrollView {
-                    VStack {
-                        Text("Search")
-                            .font(.system(size: 35, weight: .bold, design: .rounded))
-                            .foregroundStyle(.secondaryAccent)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        CustomTextField(text: self.$searchText, placeholder: "Search")
-                            .overlay {
-                                HStack {
-                                    Image(systemName: "magnifyingglass")
-                                }
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.horizontal, 20)
+        ZStack(alignment: .top) {
+            
+            // MARK: Page header
+            
+            if !self.isSearching {
+                PageHeader_t(text: "Search")
+                    .zIndex(12)
+            }
+           
+            // MARK: Content view
+            ScrollView(showsIndicators: false) {
+                VStack {
+                    
+                    // MARK: Search box
+                    CustomTextField(text: self.$searchText, placeholder: "Search")
+                        .onChange(of: self.searchText) { newValue in
+                            
+                            withAnimation(.smooth(duration: 0.2)) {
+                                self.isSearching = true
                             }
-                        
-                        HStack {
-                            ForEach(self.filterOptions, id: \.self) { filterOption in
-                                HStack {
-                                    Text(filterOption)
-                                        .fontWeight(.medium)
-                                        .foregroundStyle(self.currentSelectedFilter == filterOption ? .white : .black)
+                            
+                            if self.searchText.isEmpty {
+                                withAnimation(.smooth(duration: 0.2)) {
+                                    self.isSearching = false
                                 }
-                                .padding(10)
-                                .background(self.currentSelectedFilter == filterOption ? .appOrange : .white)
-                                .clipShape(RoundedRectangle(cornerRadius: 15))
-                                .shadow(radius: 1)
-                                .onTapGesture {
-                                    withAnimation(.smooth(duration: 0.2)) {
-                                        self.currentSelectedFilter = filterOption
+                            }
+                            
+                        }
+                        .overlay {
+                            HStack {
+                                Image(systemName: "magnifyingglass")
+                                    .foregroundStyle(.black.opacity(0.5))
+                                
+                                Spacer()
+                                
+                                if !self.searchText.isEmpty {
+                                    HStack {
+                                        Image(systemName: "xmark")
+                                            .foregroundStyle(.black.opacity(0.5))
+                                    }
+                                    .frame(width: 45, height: 45)
+                                    .offset(x: 20)
+                                    .onTapGesture {
+                                        withAnimation(.smooth(duration: 0.2)) {
+                                            self.isSearching = false
+                                            self.searchText = ""
+                                        }
                                     }
                                 }
+                                
                             }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 20)
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        switch self.currentSelectedFilter {
-                        case "All":
-                            AllFilterView()
-                                .padding(.top, 20)
-                        case "Doctors":
-                            DoctorFilterView()
-                                .padding(.top, 20)
-                            
-                        case "Hospitals":
-                            HospitalFilterView()
-                                .padding(.top, 20)
-                            
-                        case "Clinics":
-                            ClinicsFilterView()
-                                .padding(.top, 20)
-                        
-                        default:
-                            Text("Not available!")
-                        }
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                    .padding(20)
+                    
+                    
+                    // MARK: Doctor's heading
+                    SectionHeading(text: "Doctors")
+                        .padding(.top, 20)
+                    
                 }
+                .padding(.horizontal, 25)
+                .padding(.vertical, self.isSearching ? 20 : 80)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            
+            
+            // MARK: Blur at the background of tab bar
+            HStack {
+                
+            }
+            .frame(maxWidth: .infinity, minHeight: 100)
+            .background(AppBackgroundBlur(radius: 10, opaque: false))
+            .offset(y: UIScreen.main.bounds.height - 140)
+            
         }
-        
-        
-        
     }
 }
 
@@ -104,7 +113,7 @@ struct DoctorFilterView: View {
             if let _ = error {
                 
             }
-        
+            
             
             self.doctors = snapshot!.documents.compactMap { doc in
                 let data = doc.data()
@@ -118,7 +127,7 @@ struct DoctorFilterView: View {
                 let medicalAcomplishment = data["medicalAcomplishment"] as! String
                 let speciality = data["speciality"] as! String
                 
-                return Doctor(doctorId: id, hospitalName: hospitalName, fullName: fullName, username: username, password: password, doctorName: fullName, hospitalId: hospitalId, speciality: speciality, medicalAcomplishment: medicalAcomplishment)
+                return Doctor(doctorId: id, hospitalName: hospitalName, fullName: fullName, username: username, password: password,height: 183, weight: 89, bloodGroup: .ap ,doctorName: fullName, hospitalId: hospitalId, speciality: speciality, medicalAcomplishment: medicalAcomplishment)
             }
             
         }
@@ -138,7 +147,7 @@ struct DoctorFilterView: View {
 }
 
 struct HospitalFilterView: View {
-   
+    
     @State var hospitals: Array<Hospital> = []
     
     func fetchHospitals() {
@@ -165,7 +174,7 @@ struct HospitalFilterView: View {
             } ?? []
             
         }
-
+        
     }
     var body: some View {
         VStack {
@@ -206,7 +215,7 @@ struct AllFilterView: View {
         
         
         self.isLoading = true
-       let database = Firestore.firestore()
+        let database = Firestore.firestore()
         
         database.collection("hospitals").getDocuments() { (snapshot, error) in
             if let _ = error {
@@ -234,7 +243,7 @@ struct AllFilterView: View {
             if let _ = error {
                 
             }
-        
+            
             
             self.doctors = snapshot!.documents.compactMap { doc in
                 let data = doc.data()
@@ -248,7 +257,7 @@ struct AllFilterView: View {
                 let medicalAcomplishment = data["medicalAcomplishment"] as! String
                 let speciality = data["speciality"] as! String
                 
-                return Doctor(doctorId: id, hospitalName: hospitalName, fullName: fullName, username: username, password: password, doctorName: fullName, hospitalId: hospitalId, speciality: speciality, medicalAcomplishment: medicalAcomplishment)
+                return Doctor(doctorId: id, hospitalName: hospitalName, fullName: fullName, username: username, password: password,height: 183, weight: 89, bloodGroup: .ap ,doctorName: fullName, hospitalId: hospitalId, speciality: speciality, medicalAcomplishment: medicalAcomplishment)
             }
             
         }
@@ -301,7 +310,7 @@ struct HospitalCard: View {
             
             // MARK: Hospital Image
             HStack {
-               Image("hospital")
+                Image("hospital")
                     .resizable()
             }
             .frame(maxWidth: 100, maxHeight: 120)
@@ -316,7 +325,7 @@ struct HospitalCard: View {
                     .font(.system(size: 17, weight: .semibold, design: .rounded))
                     .foregroundStyle(.black.opacity(0.5))
                     .frame(maxWidth: .infinity, alignment: .leading)
-
+                
                 Text(self.hospital.location)
                     .font(.system(size: 12, weight: .regular, design: .rounded))
                     .foregroundStyle(.secondaryAccent)
@@ -326,7 +335,7 @@ struct HospitalCard: View {
             .padding(.vertical, 10)
             
             Spacer()
-           
+            
             // MARK: Navigation arrow
             HStack(alignment: .top) {
                 Image(systemName: "arrow.right")
@@ -372,14 +381,14 @@ struct DoctorCard: View {
                     .font(.system(size: 14, weight: .regular, design: .rounded))
                     .foregroundStyle(.black.opacity(0.5))
                     .frame(maxWidth: .infinity, alignment: .leading)
-
-               
+                
+                
             }
             .frame(maxHeight: .infinity, alignment: .top)
             .padding(.vertical, 10)
             
             Spacer()
-           
+            
             // MARK: Navigation arrow
             HStack(alignment: .top) {
                 Image(systemName: "arrow.right")

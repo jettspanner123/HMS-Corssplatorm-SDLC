@@ -64,16 +64,40 @@ struct SendAdmin {
     var adminId: String
 }
 
+struct SendSuperAdmin: Codable, Hashable {
+    var superadminId: String
+    var superadminName: String
+    var superadminUsername: String
+    var superadminPassword: String
+}
+
+enum BloodGroup: String, Codable {
+    case ap = "A+", an = "A-", bp = "B+", bn = "B-", abp = "AB+", abn = "AB-", op = "0+", on = "O-", select = "Blood Group"
+}
+
 struct Doctor: Codable, Hashable {
     var doctorId: String
     var hospitalName: String
     var fullName: String
     var username: String
     var password: String
+    var height: Double
+    var weight: Double
+    var bloodGroup: BloodGroup
     var doctorName: String
     var hospitalId: String
     var speciality: String
     var medicalAcomplishment: String
+}
+
+struct Appointment: Codable, Hashable {
+    var appointmentDate: Date
+    var appointmentTime: String
+    var appointmentId: String
+    var withDoctorId: String
+    var withUserId: String
+    var withDoctorName: String
+    var withUserName: String
 }
 
 struct Hospital: Codable, Hashable {

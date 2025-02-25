@@ -57,7 +57,7 @@ struct AdminDashboardHomePage: View {
                 // MARK: Current selected hospital headign
                 SectionHeading(text: "Current Hospital")
                     .padding(.top, 10)
-                    .padding(.horizontal, 25)
+                    .padding(.horizontal, 20)
                 
                 // MARK: Current selected hospital dropdown
                 ScrollView(.horizontal) {
@@ -72,14 +72,14 @@ struct AdminDashboardHomePage: View {
                                 .shadow(radius: 1)
                         }
                     }
-                    .padding(.horizontal, 25)
+                    .padding(.horizontal, 20)
                 }
                 
                 
                 // MARK: Hospital information grid
                 SectionHeading(text: "Hospital Information")
                     .padding(.top, 20)
-                    .padding(.horizontal, 25)
+                    .padding(.horizontal, 20)
                 
                 
                 
@@ -87,7 +87,9 @@ struct AdminDashboardHomePage: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
                         // MARK: Number of patients ( in comparison of the day before )
-                        InformationCard(iconsName: "person.fill", title: "Patients", color: .appOrange, textColor: .white, infoText: 33)
+                        NavigationLink(destination: AdminPagePatientsPage()) {
+                            InformationCard(iconsName: "person.fill", title: "Patients", color: .appOrange, textColor: .white, infoText: 33)
+                        }
                         
                         // MARK: Available Beds ( with percentage )
                         NavigationLink(destination: AvailableDoctorsPage()) {
@@ -105,7 +107,7 @@ struct AdminDashboardHomePage: View {
                         }
                         
                     }
-                    .padding(.horizontal, 25)
+                    .padding(.horizontal, 20)
                 }
                 .scrollClipDisabled()
                 
@@ -119,7 +121,9 @@ struct AdminDashboardHomePage: View {
                 LazyVGrid(columns: self.numberOfColumns) {
                     
                     // MARK: Add new patient
-                    QuickActionCards(iconName: "plus", color: .appOrange, textColor: .white, title: "Patient")
+                    NavigationLink(destination: AddPatientPage()) {
+                        QuickActionCards(iconName: "plus", color: .appOrange, textColor: .white, title: "Patient")
+                    }
                     
                     // MARK: Leave Requeasts
                     QuickActionCards(iconName: "text.page", color: .white, textColor: .appOrange, title: "Leaves")
@@ -141,12 +145,16 @@ struct AdminDashboardHomePage: View {
                     
                     
                 }
-                .padding(.horizontal ,25)
+                .padding(.horizontal ,20)
                 
                 
-                SectionHeading(text: "Pending Approvals")
+                SectionHeading(text: "Events & Campaigns")
                     .padding(.horizontal, 25)
                     .padding(.top, 20)
+                
+                ScrollView {
+                    
+                }
                 
             }
             .padding(.vertical, 100)
@@ -158,9 +166,9 @@ struct AdminDashboardHomePage: View {
 }
 
 
-
-
-
-#Preview {
-    AdminDashboard()
-}
+//
+//
+//
+//#Preview {
+//    AdminDashboard()
+//}

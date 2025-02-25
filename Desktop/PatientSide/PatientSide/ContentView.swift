@@ -21,7 +21,7 @@ func getCurrentDate() -> String {
 
 struct ContentView: View {
     
-    @State var selectedTab: Int = 0
+    @State var selectedTab: Int = 1
     @State var showProfilePage: Bool = false
     @State var showSettingPage: Bool = false
     
@@ -49,12 +49,13 @@ struct ContentView: View {
                 
                 HStack {
                     TabViewBar(selectedTab: $selectedTab)
+                        .zIndex(20)
                     
                     HStack {
                         Image(systemName: "xmark")
                     }
                     .frame(maxWidth: 65, maxHeight: 65)
-                    .background(.white)
+                    .background(.white.gradient)
                     .clipShape(Circle())
                     .shadow(radius: 1)
                     .onTapGesture {
@@ -65,7 +66,12 @@ struct ContentView: View {
 
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(.gray.opacity(0.2))
+            .background(.gray.opacity(0.3))
         }
     }
+}
+
+
+#Preview {
+    ContentView(user: .constant(.init(id: "123", fullName: "Uddeshya Singh", email: "uddeshya@gmail.com", location: "Patiala, Punjab", phoneNumber: "9875660105", userType: "user")))
 }

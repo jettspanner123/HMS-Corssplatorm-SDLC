@@ -149,7 +149,7 @@ struct RequestDetailPage: View {
             .background(.white.gradient)
             .clipShape(Capsule())
             .shadow(radius: 1)
-            .offset(y: UIScreen.main.bounds.height - 180)
+            .offset(y: UIScreen.main.bounds.height - 170)
             
         }
         .background(.gray.opacity(0.3))

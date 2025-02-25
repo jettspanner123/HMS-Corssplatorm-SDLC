@@ -9,7 +9,7 @@ import SwiftUI
 struct AdminTabViewBar: View {
     
     @Binding var selectedTab: Int
-    var tabs: Array<(String, Int)> = [("Home", 0),("Find", 1), ("Appointments", 2), ("Settings", 3)]
+    var tabs: Array<(String, Int)> = [("Home", 0),("Patients", 1), ("Doctors", 3), ("Billings", 4)]
     
     var body: some View {
         HStack {

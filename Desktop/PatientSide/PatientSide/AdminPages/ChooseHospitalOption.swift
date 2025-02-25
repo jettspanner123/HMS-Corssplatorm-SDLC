@@ -221,3 +221,6 @@ struct ChooseHospitalPage: View {
 
 
 
+#Preview {
+    ChooseHospitalPage(admin: .init(adminName: "", hospitalId: "", asminUsername: "", password: "", isSuperAdmin: true, adminId: ""))
+}

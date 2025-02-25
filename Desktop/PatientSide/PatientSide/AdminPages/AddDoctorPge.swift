@@ -174,8 +174,8 @@ struct AddDoctorPage: View {
             .background(.appOrange.gradient)
             .clipShape(RoundedRectangle(cornerRadius: 15))
             .shadow(radius: 1)
-            .padding(.horizontal, 30)
-            .offset(y: UIScreen.main.bounds.height - 180)
+            .padding(.horizontal, 25)
+            .offset(y: UIScreen.main.bounds.height - 145)
             .zIndex(10)
             .onTapGesture {
                 self.createDoctor()
@@ -285,16 +285,20 @@ struct AddDoctorPage: View {
                         .padding(.horizontal, 20)
                     }
                     
+                    
+                    
                 }
                 .frame(maxWidth: .infinity)
-                .padding(30)
+                .padding(25)
                 .padding(.top, 140)
                 
+            
                 
             }
             .frame(maxWidth: .infinity)
         }
         .background(.gray.opacity(0.2))
+        .navigationBarBackButtonHidden()
     }
 }
 

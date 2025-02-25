@@ -13,6 +13,7 @@ struct RegistrationPage: View {
     @State var username: String = ""
     @State var password: String = ""
     @State var doctorId: String = ""
+    @State var superAdminId: String = ""
     @State var adminId: String = ""
     
     @State var errorMessage: String = "Account Not Found"
@@ -26,10 +27,11 @@ struct RegistrationPage: View {
     
     @State var isDoctor: Bool = false
     @State var isAdmin: Bool = false
+    @State var isSuperAdmin: Bool = false
+    
     
     @State var user: SendUser = .init(id: "", fullName: "", email: "", location: "", phoneNumber: "", userType: "")
     @State var admin: SendAdmin = .init(adminName: "", hospitalId: "", asminUsername: "", password: "", isSuperAdmin: false, adminId: "")
-    
     
     // MARK: Function jisse username and password check ho raha hai and login v ho raha hai
     func performLogin() -> Void {
@@ -38,13 +40,75 @@ struct RegistrationPage: View {
         if self.username.isEmpty || self.password.isEmpty {
             self.errorMessage = "Empty Fields 😢"
             self.errorDescription = "Please fill all the essential fields."
-            self.showErrorMessage = true
+            withAnimation(.spring(duration: 0.35)) {
+                self.showErrorMessage = true
+            }
+            self.isSubmitButtonClicked = false
+            return
+        }
+        
+        if self.password.count < 8 {
+            self.errorMessage = "Week Password 🥲"
+            self.errorDescription = "The password entered dose not meet the require length of 8."
+            
+            withAnimation(.spring(duration: 0.35)) {
+                self.showErrorMessage = true
+            }
             self.isSubmitButtonClicked = false
             return
         }
         
         // MARK: Databse init
         let database = Firestore.firestore()
+        
+        // MARK: Check if super admin
+        if self.isSuperAdmin {
+            database.collection("superadmin").getDocuments() { (querySnapshot, error) in
+                
+                if self.superAdminId.isEmpty {
+                    self.errorMessage = "Invalid Admin Id 🥲"
+                    self.errorDescription = "The admin registration fields is empty or the id dosen't exists."
+                    withAnimation(.spring(duration: 0.35)) {
+                        self.showErrorMessage = true
+                    }
+                    self.isSubmitButtonClicked = false
+                    return
+                }
+                
+                if let _ = error {
+                    self.errorMessage = "Connection Error! 😭"
+                    self.errorDescription = "There was a error while connecting to the database. "
+                    
+                    withAnimation(.spring(duration: 0.35)) {
+                        self.showErrorMessage = true
+                    }
+                    return
+                }
+                
+                let availableSuperAdmins = querySnapshot!.documents.compactMap { doc in
+                    try? doc.data(as: SendSuperAdmin.self)
+                }
+                
+                for superadmin in availableSuperAdmins {
+                    if superadmin.superadminUsername == self.username.lowercased() && superadmin.superadminPassword == self.password {
+                        self.admin = .init(adminName: superadmin.superadminName, hospitalId: "", asminUsername: superadmin.superadminUsername, password: superadmin.superadminPassword, isSuperAdmin: true, adminId: superadmin.superadminId)
+                        self.isSubmitButtonClicked = false
+                        self.showSuccessfullLoginDialog = true
+                        return
+                    }
+                }
+                
+                
+                self.errorMessage = "Invalid Credentials 🥲"
+                self.errorDescription = "Please make sure that that credentials match and are of same ground."
+                
+                withAnimation(.spring(duration: 0.35)) {
+                    self.showErrorMessage = true
+                }
+                self.isSubmitButtonClicked = false
+                return
+            }
+        }
         
         
         
@@ -57,7 +121,10 @@ struct RegistrationPage: View {
                 if self.adminId.isEmpty {
                     self.errorMessage = "Invalid Admin Id 🥲"
                     self.errorDescription = "The admin registration fields is empty or the id dosen't exists."
-                    self.showErrorMessage = true
+                    
+                    withAnimation(.spring(duration: 0.35)) {
+                        self.showErrorMessage = true
+                    }
                     self.isSubmitButtonClicked = false
                     return
                 }
@@ -66,7 +133,10 @@ struct RegistrationPage: View {
                 if let _ = error {
                     self.errorMessage = "Connection Error! 😭"
                     self.errorDescription = "There was a error while connecting to the database. "
-                    self.showErrorMessage = true
+                    
+                    withAnimation(.spring(duration: 0.35)) {
+                        self.showErrorMessage = true
+                    }
                     return
                 }
                 
@@ -76,7 +146,7 @@ struct RegistrationPage: View {
                     let adminUsername = data["username"] as! String
                     let adminPassword = data["password"] as! String
                     let adminAdminId = data["adminId"] as! String
-
+                    
                     
                     print(self.username == adminUsername)
                     print(self.password == adminPassword)
@@ -96,7 +166,10 @@ struct RegistrationPage: View {
                 
                 self.errorMessage = "Invalid Credentials 🥲"
                 self.errorDescription = "Please make sure that that credentials match and are of same ground."
-                self.showErrorMessage = true
+                
+                withAnimation(.spring(duration: 0.35)) {
+                    self.showErrorMessage = true
+                }
                 self.isSubmitButtonClicked = false
             }
             return
@@ -104,7 +177,7 @@ struct RegistrationPage: View {
         
         // MARK: Check if doctor
         if self.isDoctor {
-       
+            
             database.collection("doctors").getDocuments() { (snapshot, error) in
                 
                 // MARK: Handeling errors
@@ -116,11 +189,11 @@ struct RegistrationPage: View {
                 
                 for doc in snapshot!.documents {
                     let data = doc.data()
-
+                    
                     let doctorUsername = data["username"] as! String
                     let doctorPassword = data["password"] as! String
                     let doctorId = data["doctorId"] as! String
-
+                    
                     if self.doctorId == doctorId && self.username == doctorUsername && self.password == doctorPassword {
                         self.isSubmitButtonClicked = false
                         self.showSuccessfullLoginDialog = true
@@ -130,10 +203,13 @@ struct RegistrationPage: View {
                 
                 self.errorMessage = "Invalid Credentials!"
                 self.errorDescription = "Please make suer that the doctorId, username and password matches."
-                self.showErrorMessage = true
+                
+                withAnimation(.spring(duration: 0.35)) {
+                    self.showErrorMessage = true
+                }
                 return
             }
-
+            
         }
         
         // MARK: IF note doctor and if not admin then user.
@@ -163,7 +239,9 @@ struct RegistrationPage: View {
                 
                 self.errorMessage = "Invalid Credentials!"
                 self.errorDescription = "Email Id or Password my not be correct!"
-                self.showErrorMessage = true
+                withAnimation(.spring(duration: 0.35)) {
+                    self.showErrorMessage = true
+                }
             }
         }
         
@@ -195,6 +273,16 @@ struct RegistrationPage: View {
                 self.isAdmin = false
             }
         }
+        
+        if self.username.lowercased().starts(with: "superadmin#") {
+            withAnimation {
+                self.isSuperAdmin = true
+            }
+        } else {
+            withAnimation {
+                self.isSuperAdmin = false
+            }
+        }
     }
     
     var body: some View {
@@ -203,32 +291,6 @@ struct RegistrationPage: View {
                 
                 if self.showErrorMessage {
                     VStack {
-                        VStack {
-                            Text(self.errorMessage)
-                                .font(.system(size: 25, weight: .bold, design: .rounded))
-                                .foregroundStyle(.secondary)
-                            
-                            Text(self.errorDescription)
-                                .padding(.vertical, 20)
-                            
-                            HStack {
-                                Text("I Understand")
-                                    .font(.system(size: 15, weight: .bold, design: .rounded))
-                                    .foregroundStyle(.white)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 55)
-                            .background(.appOrange.gradient)
-                            .clipShape(.rect(cornerRadius: 15))
-                            .onTapGesture {
-                                self.showErrorMessage = false
-                            }
-                            
-                        }
-                        .padding(30)
-                        .frame(maxWidth: .infinity)
-                        .background(.white)
-                        .clipShape(.rect(cornerRadius: 14))
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(25)
@@ -238,10 +300,45 @@ struct RegistrationPage: View {
                     
                 }
                 
+                if self.showErrorMessage {
+                    VStack {
+                        Text(self.errorMessage)
+                            .font(.system(size: 25, weight: .bold, design: .rounded))
+                            .foregroundStyle(.secondary)
+                        
+                        Text(self.errorDescription)
+                            .padding(.vertical, 20)
+                        
+                        HStack {
+                            Text("I Understand")
+                                .font(.system(size: 15, weight: .bold, design: .rounded))
+                                .foregroundStyle(.white)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 55)
+                        .background(.appOrange.gradient)
+                        .clipShape(.rect(cornerRadius: 15))
+                        .onTapGesture {
+                            withAnimation(.spring(duration: 0.45)) {
+                                self.showErrorMessage = false
+                            }
+                        }
+                        
+                    }
+                    .padding(30)
+                    .frame(maxWidth: .infinity)
+                    .transition(.offset(y: 1000))
+                    .background(.white)
+                    .clipShape(.rect(cornerRadius: 14))
+                    .padding(.horizontal, 25)
+                    .zIndex(31)
+                    
+                }
+                
                 
                 VStack {
                     // MARK: Profile heading
-                    if !self.isDoctor && !self.isAdmin {
+                    if !self.isDoctor && !self.isAdmin && !self.isSuperAdmin {
                         Text("Log In")
                             .font(.system(size: 40, weight: .bold, design: .rounded))
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -256,7 +353,7 @@ struct RegistrationPage: View {
                             .foregroundStyle(.secondaryAccent)
                             .padding(.top, 50)
                         
-                        Text(self.isDoctor ? "Doctor" : self.isAdmin ? "Admin" : "")
+                        Text(self.isDoctor ? "Doctor" : self.isAdmin ? "Admin" : "SuperAdmin")
                             .font(.system(size: 30, weight: .bold, design: .rounded))
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .foregroundStyle(.secondaryAccent)
@@ -331,15 +428,17 @@ struct RegistrationPage: View {
                             Image(systemName: self.isPasswordHidden ? "lock.open" : "lock")
                         }
                         .frame(maxWidth: 50, maxHeight: 50)
+                        .padding(.horizontal, 10)
                         .clipped()
                         .onTapGesture {
                             self.isPasswordHidden.toggle()
                         }
-                        .offset(x: self.isPasswordHidden ? 144 : 140)
+                        .offset(x: self.isPasswordHidden ? 139 : 135)
                         
                     }
                     .padding(.top, 3)
                     
+                    // MARK: Check if doctor
                     
                     if self.isDoctor {
                         SectionHeading(text: "Doctor Identification")
@@ -356,6 +455,25 @@ struct RegistrationPage: View {
                             }
                     }
                     
+                    // MARK: Check if super admin
+                    
+                    if self.isSuperAdmin {
+                        SectionHeading(text: "Super Administration Identification")
+                            .padding(.top, 20)
+                        
+                        CustomTextField(text: self.$superAdminId, placeholder: "Registration Id")
+                            .autocapitalization(.none)
+                            .overlay {
+                                HStack {
+                                    Image(systemName: "person.wave.2")
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 20)
+                            }
+                    }
+                    
+                    // MARK: Check if admin
+                    
                     if self.isAdmin {
                         SectionHeading(text: "Administration Identification")
                             .padding(.top, 20)
@@ -369,7 +487,7 @@ struct RegistrationPage: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal, 20)
                             }
-
+                        
                     }
                     
                     // MARK: Submit button
@@ -416,22 +534,24 @@ struct RegistrationPage: View {
                         
                     }
                 }
-                .padding(30)
+                .padding(25)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .background(.gray.opacity(0.2))
             }
             .navigationDestination(isPresented: self.$showSuccessfullLoginDialog) {
-                if self.isAdmin {
-                    ChooseHospitalPage(admin: self.admin)
+                if self.isAdmin || self.isSuperAdmin {
+                    //                    ChooseHospitalPage(admin: self.admin)
+                    //                        .navigationBarBackButtonHidden()
+                    //
+                    AdminDashboard(admin: self.$admin)
                         .navigationBarBackButtonHidden()
-                    
                 }
                 
                 if self.isDoctor {
                     EmptyView()
                 }
                 
-                if !self.isAdmin && !self.isDoctor {
+                if !self.isAdmin && !self.isDoctor && !self.isSuperAdmin {
                     ContentView(user: self.$user)
                         .navigationBarBackButtonHidden()
                 }

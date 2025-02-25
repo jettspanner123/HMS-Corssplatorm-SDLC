@@ -16,21 +16,20 @@ struct AvailableDoctorsPage: View {
     
     // MARK: Example doctors
     @State var availableDoctors: Array<Doctor> = [
-        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
-        .init(doctorId: "456", hospitalName: "Apollo Hospitals", fullName: "Anika Sharma", username: "doc#anika_sharma", password: "SecurePassword1", doctorName: "Dr. Anika Sharma", hospitalId: "ghjklmnb", speciality: "Cardiology", medicalAcomplishment: "Pioneer in Minimally Invasive Cardiac Surgery"),
-        .init(doctorId: "789", hospitalName: "Fortis Hospital", fullName: "Rohan Gupta", username: "doc#rohan_gupta", password: "AnotherStrongPassword", doctorName: "Dr. Rohan Gupta", hospitalId: "qwertyuiop", speciality: "Neurology", medicalAcomplishment: "Awarded for Excellence in Neurological Research"),
-        .init(doctorId: "101", hospitalName: "Max Healthcare", fullName: "Priya Patel", username: "doc#priya_patel", password: "Password123", doctorName: "Dr. Priya Patel", hospitalId: "asdfghjkl", speciality: "Dermatology", medicalAcomplishment: "Specialist in Cosmetic Dermatology"),
-        .init(doctorId: "112", hospitalName: "Columbia Asia Hospital", fullName: "Vikram Singh", username: "doc#vikram_singh", password: "MyPassword", doctorName: "Dr. Vikram Singh", hospitalId: "zxcvbnm", speciality: "Orthopedics", medicalAcomplishment: "Expert in Joint Replacement Surgery"),
-        .init(doctorId: "131", hospitalName: "Manipal Hospital", fullName: "Isha Kapoor", username: "doc#isha_kapoor", password: "StrongPass", doctorName: "Dr. Isha Kapoor", hospitalId: "poiuytrewq", speciality: "Oncology", medicalAcomplishment: "Leading Researcher in Cancer Treatment"),
-        .init(doctorId: "142", hospitalName: "Medanta - The Medicity", fullName: "Arjun Reddy", username: "doc#arjun_reddy", password: "SecurePass", doctorName: "Dr. Arjun Reddy", hospitalId: "lkjhgfdsa", speciality: "Internal Medicine", medicalAcomplishment: "Recognized for Outstanding Patient Care"),
-        .init(doctorId: "153", hospitalName: "Sir Ganga Ram Hospital", fullName: "Natasha Khanna", username: "doc#natasha_khanna", password: "Password", doctorName: "Dr. Natasha Khanna", hospitalId: "mnbvcxz", speciality: "Pediatrics", medicalAcomplishment: "Dedicated to Children's Health"),
-        .init(doctorId: "164", hospitalName: "BLK Super Speciality Hospital", fullName: "Aditya Chopra", username: "doc#aditya_chopra", password: "MySecretPassword", doctorName: "Dr. Aditya Chopra", hospitalId: "qazwsxedc", speciality: "Gastroenterology", medicalAcomplishment: "Specialist in Digestive Disorders"),
-        .init(doctorId: "175", hospitalName: "Kokilaben Dhirubhai Ambani Hospital", fullName: "Simran Kaur", username: "doc#simran_kaur", password: "AnotherSecretPassword", doctorName: "Dr. Simran Kaur", hospitalId: "edcxszaq", speciality: "Ophthalmology", medicalAcomplishment: "Expert in Laser Eye Surgery")
+        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
+        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
+        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
+        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
+        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
+        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
+        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
+        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
+        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
+        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
     ]
     
     @State var filterAvailableDoctors: Array<Doctor> = []
-    
-    
+ 
     
     var body: some View {
         NavigationStack {
@@ -60,10 +59,6 @@ struct AvailableDoctorsPage: View {
                         // MARK: Top Search Box
                         CustomTextField(text: self.$searchText, placeholder: "Search")
                             .onChange(of: self.searchText) { newValue in
-//                                for i in self.availableDoctors {
-//                                    print(i.fullName.lowercased().starts(with: self.searchText.lowercased()))
-//                                }
-                                
                                 self.filterAvailableDoctors = self.availableDoctors.filter {
                                     $0.fullName.lowercased().starts(with: self.searchText.lowercased()) || $0.speciality.lowercased().starts(with: self.searchText.lowercased()) || $0.fullName.lowercased().contains(self.searchText.lowercased())
                                 }

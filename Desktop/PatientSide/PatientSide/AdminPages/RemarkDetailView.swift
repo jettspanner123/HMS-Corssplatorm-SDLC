@@ -112,7 +112,7 @@ struct RemarkDetailView: View {
             .clipShape(RoundedRectangle(cornerRadius: 15))
             .shadow(radius: 1)
             .padding(.horizontal, 25)
-            .offset(y: UIScreen.main.bounds.height - 180)
+            .offset(y: UIScreen.main.bounds.height - 140)
             .zIndex(10)
             .onTapGesture {
             }

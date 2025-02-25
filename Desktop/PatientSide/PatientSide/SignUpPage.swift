@@ -141,7 +141,16 @@ struct SignUpPage: View {
                     
                 }
                 
+                // MARK: Bottom background blur
+                HStack {
+                }
+                .frame(maxWidth: .infinity, minHeight: 100)
+                .background(AppBackgroundBlur(radius: 5, opaque: false))
+                .offset(y: UIScreen.main.bounds.height - 120)
+                .zIndex(9)
                 
+                
+                // MARK: Top background blur
                 HStack {
                 }
                 .frame(maxWidth: .infinity)
@@ -198,7 +207,7 @@ struct SignUpPage: View {
                 .clipShape(RoundedRectangle(cornerRadius: 15))
                 .shadow(radius: 1)
                 .padding(.horizontal, 30)
-                .offset(y: UIScreen.main.bounds.height - 180)
+                .offset(y: UIScreen.main.bounds.height - 145)
                 .zIndex(10)
                 .onTapGesture {
                     self.performSignup()

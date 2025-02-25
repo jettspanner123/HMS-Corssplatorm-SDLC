@@ -93,7 +93,8 @@ struct RequestsPage: View {
                     
                     VStack {
                         SectionHeading(text: "Filters")
-                        
+                            .padding(.horizontal, 25)
+
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
                                 ForEach(self.requestOngoinOptions, id: \.self) { requestOngoinType in
@@ -109,23 +110,25 @@ struct RequestsPage: View {
                                         }
                                 }
                             }
+                            .padding(.horizontal, 25)
                         }
                         
                         
                         SectionHeading(text: "Request")
                             .padding(.top, 20)
-                        
+                            .padding(.horizontal, 25)
+
                         ForEach(self.requests, id: \.fromUserId) { request in
                             if self.selectedRequestOngoinType == request.requestStatus {
                                 NavigationLink(destination: RequestDetailPage(request: request)) {
                                     RequestCard(request: request)
+                                        .padding(.horizontal, 25)
                                 }
                             }
                         }
                         
                     }
                     .padding(.top, 110)
-                    .padding(.horizontal, 25)
                 }
                 
                 
