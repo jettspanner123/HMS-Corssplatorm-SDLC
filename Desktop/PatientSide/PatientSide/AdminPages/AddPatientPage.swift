@@ -14,7 +14,10 @@ struct AddPatientPage: View {
     @State var errorDescription: String = ""
     
     @State var isSubmitButtonClicked: Bool = false
+    
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var appStates: AppStates
+    
     @State var isGenderOpen: Bool = false
     var genderOptions: Array<String> = ["Chad 🗿", "Gurl 💅🏻", "LGTV 🤡"]
     
@@ -33,6 +36,11 @@ struct AddPatientPage: View {
     
     @State var showBottomSheet: Bool = false
     @State var bottomSheetTranslation: CGSize = .zero
+    
+    
+    @State var showSuccessMessage: Bool = false
+    @State var successMessage: String = ""
+    
     let bloodGroupOptions: Array<BloodGroup> = [.ap, .an, .bp, .bn, .abp, .abp, .op]
     
     func setBloodGroup(_ bloodGroup: BloodGroup) {
@@ -40,6 +48,50 @@ struct AddPatientPage: View {
         withAnimation(.spring(duration: 0.35)) {
             self.showBottomSheet = false
         }
+    }
+    
+    func createPatient() -> Void {
+        
+        self.isSubmitButtonClicked = true
+        
+        if self.patientFullName.isEmpty || self.patientNumber.isEmpty || self.patientGender == "Gender" || self.patientAddress.isEmpty || self.patientBloodGroup == .select || self.emergencyContactName.isEmpty || self.emergencyContactNumber.isEmpty || self.emergencyContactRelation.isEmpty || self.emergencyContactAddress.isEmpty {
+            self.errorMessage = "All Fields Requred 🥲"
+            self.errorDescription = "Make sure that all the fields are filled properly."
+            self.isSubmitButtonClicked = false
+            withAnimation {
+                self.showErrorMessage = true
+            }
+            return
+        }
+        
+        self.appStates.users.append(.init(id: self.patientId, fullName: self.patientFullName, email: "", location: self.patientAddress, phoneNumber: self.patientNumber, userType: "patient"))
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.isSubmitButtonClicked = false
+            self.patientFullName = ""
+            self.patientNumber = ""
+            self.patientGender = "Gender"
+            self.patientAddress = ""
+            self.patientBloodGroup = .select
+            
+            self.emergencyContactName = ""
+            self.emergencyContactNumber = ""
+            self.emergencyContactAddress = ""
+            self.emergencyContactRelation = ""
+            
+            withAnimation {
+                self.showSuccessMessage = true
+            }
+            
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                withAnimation {
+                    self.showSuccessMessage = false
+                }
+            }
+
+        }
+        
     }
 
     var body: some View {
@@ -113,7 +165,7 @@ struct AddPatientPage: View {
                             .frame(maxWidth: .infinity, maxHeight: 30)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(30)
+                    .padding(25)
                     .background(.appBackground)
                     .clipShape(UnevenRoundedRectangle(cornerRadii: .init(topLeading: 15, topTrailing: 15)))
                     .offset(y: self.bottomSheetTranslation.height)
@@ -148,9 +200,52 @@ struct AddPatientPage: View {
                 .zIndex(21)
             }
             
+            
+            if self.showSuccessMessage {
+                HStack {
+                    
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 80)
+                .background(AppBackgroundBlur(radius: 10, opaque: false))
+                .background(
+                    LinearGradient(gradient: Gradient(colors: [.black.opacity(0.5), .clear]), startPoint: .top, endPoint: .bottom)
+                )
+                .transition(.opacity)
+                .zIndex(20)
+                
+            }
+            
+            if self.showSuccessMessage {
+                Text(self.successMessage)
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .padding(15)
+                    .background(.appGreen.gradient)
+                    .clipShape(Capsule())
+                    .shadow(radius: 2)
+                    .offset(y: 30)
+                    .transition(.offset(y: -200))
+                    .zIndex(21)
+                
+            }
+            
             // MARK: Error Dialog Box
             if self.showErrorMessage {
                 VStack {
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(25)
+                .background(.black.opacity(0.5))
+                .shadow(radius: 1)
+                .zIndex(20)
+                
+            }
+            
+            // MARK: Error Dialog Box
+            if self.showErrorMessage {
+                VStack {
+                    
                     VStack {
                         Text(self.errorMessage)
                             .font(.system(size: 25, weight: .bold, design: .rounded))
@@ -169,8 +264,9 @@ struct AddPatientPage: View {
                         .background(.appOrange.gradient)
                         .clipShape(.rect(cornerRadius: 15))
                         .onTapGesture {
-                            self.isSubmitButtonClicked = false
-                            self.showErrorMessage = false
+                            withAnimation(.spring(duration: 0.45)) {
+                                self.showErrorMessage = false
+                            }
                         }
                         
                     }
@@ -178,14 +274,14 @@ struct AddPatientPage: View {
                     .frame(maxWidth: .infinity)
                     .background(.white)
                     .clipShape(.rect(cornerRadius: 14))
+                    .padding(.horizontal, 25)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(25)
-                .background(.black.opacity(0.5))
-                .shadow(radius: 1)
-                .zIndex(12)
-                
+                .transition(.offset(y: 1000))
+                .zIndex(31)
             }
+            
+            
             
             
             // MARK: Bottom background blur
@@ -257,7 +353,7 @@ struct AddPatientPage: View {
             .offset(y: UIScreen.main.bounds.height - 145)
             .zIndex(10)
             .onTapGesture {
-                
+                self.createPatient()
             }
             
             

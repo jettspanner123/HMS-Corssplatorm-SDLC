@@ -12,6 +12,35 @@ struct DoctorDetailsPage: View {
     @State var doctor: Doctor
     @State var showEditDoctorPage: Bool = false
     
+    @EnvironmentObject var appStates: AppStates
+    
+    @State var currentDoctorPatients: Array<SendUser> = []
+    
+    func fetchPatientsForCurrentDoctor() {
+        
+        
+        // MARK: Creatating a temp list for holding all the id's as string
+        var patientList: Array<String> = []
+        
+        
+        // MARK: Pushing all the string of id's to the list
+        for appointment in self.appStates.appointments {
+            if appointment.doctorId == self.doctor.doctorId {
+                patientList.append(appointment.patientId)
+            }
+        }
+        
+        
+        // MARK: Fetching the patient object from the id's
+        for patientId in patientList {
+            for patient in self.appStates.users {
+                if patientId == patient.id {
+                    self.currentDoctorPatients.append(patient)
+                }
+            }
+        }
+        
+    }
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -27,7 +56,7 @@ struct DoctorDetailsPage: View {
             .zIndex(11)
             
             // MARK: Page heading
-            SecondaryPageHeader(headingText: "Details", id: "doctorDetailPage") {
+            SecondaryPageHeader(headingText: "Details", id: .doctorDetails) {
                 self.showEditDoctorPage = true
             }
             .offset(y: 25)
@@ -45,21 +74,14 @@ struct DoctorDetailsPage: View {
                         // MARK: Patients about to see today
                         VStack {
                             HStack {
-                                Text("28")
+                                Text(String(self.currentDoctorPatients.count))
                                     .font(.system(size: 50, weight: .bold, design: .monospaced))
-                                    .foregroundStyle(.opacity(0.5))
-                                
-                                Image(systemName: "heart.fill")
-                                    .resizable()
-                                    .frame(maxWidth: 30, maxHeight: 30)
-                                    .foregroundStyle(
-                                        LinearGradient(gradient: Gradient(colors: [.pink, .red]), startPoint: .bottomLeading, endPoint: .topTrailing)
-                                    )
+                                    .foregroundStyle(.white)
                             }
                             
                             Text("Patients")
                                 .font(.system(size: 15, weight: .regular, design: .rounded))
-                                .foregroundStyle(.black.opacity(0.5))
+                                .foregroundStyle(.white.opacity(0.5))
                             
                             
                         }
@@ -67,7 +89,7 @@ struct DoctorDetailsPage: View {
                         .frame(height: 100)
                         .padding(20)
                         .background(
-                            .white.gradient
+                            .appOrange.gradient
                         )
                         .clipShape(RoundedRectangle(cornerRadius: 15))
                         .shadow(radius: 1)
@@ -119,13 +141,19 @@ struct DoctorDetailsPage: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 20)
-                    .background(.white.gradient)
+                    .background(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 15))
                     .shadow(radius: 1)
                     
                     SectionHeading(text: "Patients")
                         .padding(.top, 20)
                     
+                    ForEach(self.$currentDoctorPatients, id: \.id) { $patient in
+                        NavigationLink(destination: PatientDetailsPage(patient: $patient)) {
+                            PatientCard(patient: $patient)
+                        }
+                        
+                    }
                     
                 }
                 .padding(.top, 110)
@@ -138,43 +166,12 @@ struct DoctorDetailsPage: View {
         .navigationDestination(isPresented: self.$showEditDoctorPage) {
             EditDoctorPage(doctor: self.$doctor)
         }
-    }
-}
-
-
-struct SpaceBetweenTextView: View {
-    
-    var firstText: String
-    var secondText: String
-    
-    var body: some View {
-        HStack {
-            Text(self.firstText)
-                .font(.system(size: 15, weight: .medium, design: .rounded))
-                .foregroundStyle(.black.opacity(0.75))
-            
-            Spacer()
-            
-            Text(self.secondText)
-                .font(.system(size: 15, weight: .regular, design: .rounded))
-                .foregroundStyle(.black.opacity(0.35))
-            
+        .onAppear {
+            self.fetchPatientsForCurrentDoctor()
         }
     }
 }
 
 
-struct CustomDivider: View {
-    var body: some View {
-        
-        // MARK: Divider
-        HStack {
-            
-        }
-        .frame(maxWidth: .infinity)
-        .frame(height: 1)
-        .background(.black.opacity(0.1))
-        .padding(.vertical, 5)
-        
-    }
-}
+
+

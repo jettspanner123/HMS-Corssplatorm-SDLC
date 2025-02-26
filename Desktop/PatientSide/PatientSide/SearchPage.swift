@@ -180,7 +180,7 @@ struct HospitalFilterView: View {
         VStack {
             SectionHeading(text: "Hospitals")
             
-            ForEach(self.hospitals, id: \.self) { hospital in
+            ForEach(self.$hospitals, id: \.self) { hospital in
                 HospitalCard(hospital: hospital)
             }
         }
@@ -274,9 +274,9 @@ struct AllFilterView: View {
                 
                 // MARK: Hospital section heading
                 SectionHeading(text: "Hospitals")
-                ForEach(self.hospitals, id: \.self) { hospital in
-                    NavigationLink(destination: HospitalScreen(hospital: hospital)) {
-                        HospitalCard(hospital: hospital)
+                ForEach(self.$hospitals, id: \.self) { $hospital in
+                    NavigationLink(destination: HospitalScreen(hospital: $hospital)) {
+                        HospitalCard(hospital: $hospital)
                     }
                 }
                 
@@ -302,7 +302,7 @@ struct AllFilterView: View {
 // MARK: Hospital View Card
 
 struct HospitalCard: View {
-    var hospital: Hospital
+    @Binding var hospital: Hospital
     
     var body: some View {
         HStack(spacing: 15) {
@@ -322,7 +322,8 @@ struct HospitalCard: View {
             // MARK: Hospital Information
             VStack {
                 Text(self.hospital.hospitalName)
-                    .font(.system(size: 17, weight: .semibold, design: .rounded))
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .lineLimit(1)
                     .foregroundStyle(.black.opacity(0.5))
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -330,6 +331,14 @@ struct HospitalCard: View {
                     .font(.system(size: 12, weight: .regular, design: .rounded))
                     .foregroundStyle(.secondaryAccent)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                
+                Spacer()
+                
+                Text(self.hospital.speciality)
+                    .font(.system(size: 12, weight: .regular, design: .rounded))
+                    .foregroundStyle(.secondaryAccent)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
             }
             .frame(maxHeight: .infinity, alignment: .top)
             .padding(.vertical, 10)
@@ -338,7 +347,7 @@ struct HospitalCard: View {
             
             // MARK: Navigation arrow
             HStack(alignment: .top) {
-                Image(systemName: "arrow.right")
+                Image(systemName: "plus")
                     .foregroundStyle(.secondaryAccent)
             }
             .frame(maxHeight: .infinity)

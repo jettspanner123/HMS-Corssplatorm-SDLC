@@ -1,8 +1,6 @@
 
 import Foundation
-
-
-
+import SwiftUICore
 
 
 
@@ -13,6 +11,13 @@ enum UserRelation: String {
 
 enum UserGender {
     case male, female, bisexual, lesbian, gay, others
+}
+
+
+func getHumanRedableDate(from date: Date) -> String {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "d/M/yyyy"
+    return dateFormatter.string(from: date)
 }
 
 struct EmergencyContactUser {
@@ -53,6 +58,10 @@ struct SendUser {
     var location: String
     var phoneNumber: String
     var userType: String
+    var password: String = ""
+    var height: CGFloat = .zero
+    var weight: CGFloat = .zero
+    var bloodGroup: BloodGroup = .ap
 }
 
 struct SendAdmin {
@@ -75,6 +84,11 @@ enum BloodGroup: String, Codable {
     case ap = "A+", an = "A-", bp = "B+", bn = "B-", abp = "AB+", abn = "AB-", op = "0+", on = "O-", select = "Blood Group"
 }
 
+
+enum EventType: String, Codable{
+    case bloodDonation = "Blood Donation", fundRaiser = "Fund Raiser", volunteerWork = "Volunteer Work", charity = "Charity", seminar = "Seminar", checkup = "Check Up"
+}
+
 struct Doctor: Codable, Hashable {
     var doctorId: String
     var hospitalName: String
@@ -88,17 +102,35 @@ struct Doctor: Codable, Hashable {
     var hospitalId: String
     var speciality: String
     var medicalAcomplishment: String
+    var phoneNumber: String = ""
 }
 
-struct Appointment: Codable, Hashable {
-    var appointmentDate: Date
-    var appointmentTime: String
-    var appointmentId: String
-    var withDoctorId: String
-    var withUserId: String
-    var withDoctorName: String
-    var withUserName: String
+enum LeaveStatus: String, Codable, Hashable {
+    case pending = "Pending", approved = "Approved", rejected = "Rejected"
 }
+
+struct Leave: Codable, Hashable {
+    
+    var leaveId = UUID().uuidString
+    var fromDoctorid: String
+    var fromDoctorName: String
+    var leaveDescription: String
+    var leaveStatus: LeaveStatus
+    var from: Date
+    var to: Date
+    
+    
+}
+
+struct Event: Codable, Hashable {
+    var eventId: String = UUID().uuidString
+    var eventName: String
+    var eventDescription: String
+    var eventType: EventType
+    var location: String
+    var date: Date
+}
+
 
 struct Hospital: Codable, Hashable {
     var hospitalId: String
@@ -106,6 +138,12 @@ struct Hospital: Codable, Hashable {
     var superadminId: String
     var location: String
     var speciality: String
+}
+
+struct Department: Codable, Hashable {
+    var departmentId = UUID().uuidString
+    var departmentName: String
+    var hospitalId: String
 }
 
 struct Remarks: Codable, Hashable {
@@ -130,6 +168,37 @@ enum RequestOption: String, CaseIterable, Identifiable {
 }
 
 
+
+func getDateOnly(_ of: Date) -> String {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "dd"
+    
+    return dateFormatter.string(from: of)
+}
+
+func getDayOnly(_ of: Date) -> String {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "EEEE"
+    
+    return String(dateFormatter.string(from: of))
+}
+
+enum AppointmentType: String, Codable, Hashable {
+    case upcoming = "Upcoming", failed = "Failed", cancelled = "Cancelled", completed = "Completed"
+}
+
+struct Appointment: Codable, Hashable {
+    var appointmentId: String = UUID().uuidString
+    var appointmentDate: Date
+    var appointmentTime: Date
+    var doctorId: String
+    var doctorName: String
+    var patientId: String
+    var patientName: String
+    var appointmentType: AppointmentType
+}
+
+
 struct Request: Hashable {
     var fromUserId: String
     var fromUserName: String
@@ -138,4 +207,9 @@ struct Request: Hashable {
     var requestDescription: String
     var requestStatus: RequestOption
     var requestType: RequestType
+}
+
+
+func daysBetween(from: Date, to: Date) -> Int {
+    return Calendar.current.dateComponents([.day], from: from, to: to).day ?? -1
 }

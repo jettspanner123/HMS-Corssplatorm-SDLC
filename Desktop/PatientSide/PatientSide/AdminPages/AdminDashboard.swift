@@ -18,7 +18,6 @@ struct AdminDashboard: View {
     @EnvironmentObject var appStates: AppStates
     
     @Binding var admin: SendAdmin
-    var admin_t: SendAdmin = .init(adminName: "", hospitalId: "", asminUsername: "", password: "", isSuperAdmin: true, adminId: "")
     
     var body: some View {
         NavigationStack {
@@ -48,93 +47,82 @@ struct AdminDashboard: View {
                 
                 // MARK: Show add page bottom screen
                 if self.appStates.showAddPage {
-                    CustomBottomSheet {
+                    VStack {
                         VStack {
                             
-                            // MARK: Cusomt bottom sheet swipe indicator
                             Capsule()
-                                .fill(.appOrange.opacity(0.35).gradient)
+                                .fill(.appOrange.opacity(0.25))
+                                .stroke(.black.opacity(0.5), lineWidth: 0.5)
                                 .frame(maxWidth: 50, maxHeight: 15)
-                                .padding(.vertical, 10)
                             
                             
+                            // MARK: Bottom sheet headign
+                            Text("Create Entity")
+                                .font(.system(size: 30, weight: .bold, design: .rounded))
+                                .foregroundStyle(.secondaryAccent)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.top, 20)
                             
-                            
-                            // MARK: Cusomt bottom sheet heading
-                            HStack(spacing: 15) {
-                                
-                                
-                                Text("Create Entity")
-                                    .font(.system(size: 30, weight: .bold, design: .rounded))
-                                    .foregroundStyle(.secondaryAccent)
-                                    .padding(.top, 20)
-                                
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                            
-                            // MARK: If super admin show add admin, hospital Page
-                            if self.admin_t.isSuperAdmin {
-                                NavigationLink(destination: AddAdminPage()) {
-                                    AdminAddSomethingChoice()
-                                }
-                                
-                                NavigationLink(destination: CreateHospitalPage()) {
-                                    AdminAddSomethingChoice()
-                                }
-                            }
-                            
-                            
-                            // MARK: Add Patient link
                             NavigationLink(destination: AddPatientPage()) {
-                                AdminAddSomethingChoice()
+                                AdminAddSomethingChoice(image: "person.fill", heading: "Patient")
                             }
                             
-                            // MARK: Add Doctor link
                             NavigationLink(destination: AddDoctorPage()) {
-                                AdminAddSomethingChoice()
+                                AdminAddSomethingChoice(image: "stethoscope", heading: "Doctor")
                             }
                             
-                            // MARK: Add Hospital link
-                            NavigationLink(destination: CreateHospitalPage()) {
-                                AdminAddSomethingChoice()
+                            NavigationLink(destination: EmptyView()) {
+                                AdminAddSomethingChoice(image: "folder.fill", heading: "Department")
                             }
+                            
+                            if self.admin.isSuperAdmin {
+                                NavigationLink(destination: CreateHospitalPage()) {
+                                    AdminAddSomethingChoice(image: "building.columns.fill", heading: "Hospital")
+                                }
+                                
+                                NavigationLink(destination: AddAdminPage()) {
+                                    AdminAddSomethingChoice(image: "person.crop.circle.badge.checkmark", heading: "Admin")
+                                }
+                            }
+                            
+                            Spacer()
+                                .frame(maxWidth: .infinity, maxHeight: 20)
                             
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                        .padding(.top, 10)
-                        .padding(.horizontal, 30)
-                        .background(.white.gradient)
-                        .clipShape(RoundedRectangle(cornerRadius: 15))
-                        .padding(.top, self.admin_t.isSuperAdmin ? 20 : 100)
+                        .frame(maxWidth: .infinity)
+                        .padding(25)
+                        .background(.appBackground)
+                        .clipShape(UnevenRoundedRectangle(cornerRadii: .init(topLeading: 15, topTrailing: 15)))
+                        .offset(y: self.addPageTranslate.height)
                         .edgesIgnoringSafeArea(.bottom)
-                    }
-                    .transition(.move(edge: .bottom))
-                    .offset(y: self.addPageTranslate.height)
-                    .zIndex(30)
-                    .gesture(
-                        DragGesture()
-                            .onChanged { value in
-                                withAnimation(.bouncy) {
+                        .gesture(
+                            DragGesture()
+                                .onChanged { value in
                                     if value.translation.height > .zero {
-                                        self.addPageTranslate = value.translation
+                                        withAnimation(.bouncy) {
+                                            self.addPageTranslate = value.translation
+                                        }
                                     }
                                 }
-                            }
-                            .onEnded { value in
-                                if value.translation.height > 100 {
-                                    withAnimation(.spring(duration: 0.35)) {
-                                        self.appStates.showAddPage = false
-                                        self.addPageTranslate = .zero
+                                .onEnded { value in
+                                    if value.translation.height > 100 {
+                                        withAnimation(.spring(duration: 0.35)) {
+                                            self.appStates.showAddPage = false
+                                            self.addPageTranslate = .zero
+                                        }
+                                    } else {
+                                        withAnimation(.spring(duration: 0.35)) {
+                                            self.addPageTranslate = .zero
+                                        }
                                     }
-                                } else {
-                                    withAnimation(.spring(duration: 0.35)) {
-                                        self.addPageTranslate = .zero
-                                    }
+                                    
                                 }
-                                
-                            }
-                    )
+                        )
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                    .transition(.move(edge: .bottom))
+                    .edgesIgnoringSafeArea(.bottom)
+                    .zIndex(21)
                 }
                 
                 
@@ -156,6 +144,7 @@ struct AdminDashboard: View {
                     if self.selectedTab == 0 {
                         AdminDashboardHomePage()
                     } else if self.selectedTab == 1 {
+                        AdminDashboardPatientPage()
                     } else if self.selectedTab == 2 {
                         
                     } else if self.selectedTab == 3 {
@@ -183,12 +172,27 @@ struct AdminDashboard: View {
 }
 
 struct AdminAddSomethingChoice: View {
+    var image: String
+    var heading: String
+    
     var body: some View {
         HStack {
+            Image(systemName: self.image)
+                .foregroundStyle(.appOrange.gradient)
             
+            Text(self.heading)
+                .font(.system(size: 15, weight: .medium, design: .rounded))
+                .foregroundStyle(.black.opacity(0.5))
+            
+            Spacer()
+            
+            Image(systemName: "chevron.right")
+                .foregroundStyle(.black.opacity(0.5))
         }
-        .frame(maxWidth: .infinity, maxHeight: 100)
-        .background(.gray.opacity(0.2).gradient)
+        .frame(maxWidth: .infinity)
+        .frame(height: 55)
+        .padding(.horizontal, 25)
+        .background(.white.gradient)
         .clipShape(RoundedRectangle(cornerRadius: 15))
         .shadow(radius: 1)
     }

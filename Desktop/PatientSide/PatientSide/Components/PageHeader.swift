@@ -16,7 +16,7 @@ struct PageHeader: View {
     
     var body: some View {
         HStack {
-            Text(self.selectedTab == 0 ? "Home" : self.selectedTab == 1 ? "Patients" : self.selectedTab == 2 ? "Doctors" : "Settings")
+            Text(self.selectedTab == 0 ? "Home" : self.selectedTab == 1 ? "Patients" : self.selectedTab == 2 ? "Doctors" : "")
                 .font(.system(size: 40, weight: .bold, design: .rounded))
                 .foregroundStyle(.secondaryAccent.gradient)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -43,33 +43,38 @@ struct PageHeader: View {
                 //                }
                 
                 
-                HStack {
-                    Image(systemName: "door.right.hand.open")
-                        .foregroundStyle(.black.opacity(0.5))
-                }
-                .frame(maxWidth: 50, maxHeight: 50)
-                .background(.white.gradient)
-                .clipShape(Circle())
-                .shadow(radius: 1)
-                .onTapGesture {
-                    self.presentationMode.wrappedValue.dismiss()
-                }
-                
-                // MARK: Add button
-                HStack {
-                    Image(systemName: "plus")
-                        .foregroundStyle(.black.opacity(0.5))
-                }
-                .frame(maxWidth: 50, maxHeight: 50)
-                .background(.white.gradient)
-                .clipShape(Circle())
-                .shadow(radius: 1)
-                .onTapGesture {
-                    withAnimation(.smooth(duration: 0.35)) {
-                        self.appStates.showAddPage = true
+                if self.selectedTab == 0 {
+                    HStack {
+                        Image(systemName: "door.right.hand.open")
+                            .foregroundStyle(.black.opacity(0.5))
                     }
+                    .frame(maxWidth: 50, maxHeight: 50)
+                    .background(.white.gradient)
+                    .clipShape(Circle())
+                    .shadow(radius: 1)
+                    .onTapGesture {
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
+                    
+                    // MARK: Add button
+                    HStack {
+                        Image(systemName: "plus")
+                            .foregroundStyle(.black.opacity(0.5))
+                    }
+                    .frame(maxWidth: 50, maxHeight: 50)
+                    .background(.white.gradient)
+                    .clipShape(Circle())
+                    .shadow(radius: 1)
+                    .onTapGesture {
+                        withAnimation(.smooth(duration: 0.35)) {
+                            self.appStates.showAddPage = true
+                        }
+                    }
+                } else {
+                    
                 }
             }
+            
         }
         .padding(.horizontal, 30)
         .padding(.top, 20)

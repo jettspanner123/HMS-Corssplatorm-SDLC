@@ -9,23 +9,39 @@ import SwiftUI
 struct AdminTabViewBar: View {
     
     @Binding var selectedTab: Int
-    var tabs: Array<(String, Int)> = [("Home", 0),("Patients", 1), ("Doctors", 3), ("Billings", 4)]
+    var tabs: Array<(String, Int)> = [("Home", 0),("Patients", 1), ("Doctors", 2)]
     
     var body: some View {
         HStack {
             ForEach(self.tabs, id: \.self.0) { (item, index) in
-                HStack {
-                    Image(systemName: index == 0 ? "house.fill" : index == 1 ? "person.fill" : index == 2 ? "plus" : index == 3 ? "stethoscope" : "gear")
-                        .resizable()
-                        .frame(width: 20, height: 20)
-                        .foregroundStyle(selectedTab != index ? .secondaryAccent : .white)
+                if self.selectedTab == index {
+                    HStack {
+                        Image(systemName: index == 0 ? "house.fill" : index == 1 ? "person.fill" : index == 2 ? "plus" : index == 3 ? "stethoscope" : "gear")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(.white.gradient)
+                    }
+                    .frame(maxWidth: 65, maxHeight: 65)
+                    .background(.secondaryAccent.gradient)
+                    .clipShape(Circle())
+                    .onTapGesture {
+                        selectedTab = index
+                    }
+                } else  {
+                    HStack {
+                        Image(systemName: index == 0 ? "house.fill" : index == 1 ? "person.fill" : index == 2 ? "plus" : index == 3 ? "stethoscope" : "gear")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(.secondaryAccent.gradient)
+                    }
+                    .frame(maxWidth: 65, maxHeight: 65)
+                    .background(.clear)
+                    .clipShape(Circle())
+                    .onTapGesture {
+                        selectedTab = index
+                    }
                 }
-                .frame(maxWidth: 65, maxHeight: 65)
-                .background(selectedTab == index ? .secondaryAccent : .clear)
-                .clipShape(Circle())
-                .onTapGesture {
-                    selectedTab = index
-                }
+                
             }
         }
         .padding(8)

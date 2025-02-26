@@ -8,7 +8,11 @@
 import SwiftUI
 struct RemarkDetailView: View {
     
-    var remark: Remarks
+    @Binding var remark: Remarks
+    @Environment(\.presentationMode) var presentationMode
+    @State var isMarkButtonClicked: Bool = false
+    
+    
     var body: some View {
         ZStack(alignment: .top) {
             
@@ -101,10 +105,16 @@ struct RemarkDetailView: View {
             
             // MARK: Mark as viewed button
             
+            
             HStack {
-                Text(self.remark.markAsRead ? "Mark Unread" : "Mark Read")
-                    .font(.system(size: 15, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
+                if self.isMarkButtonClicked {
+                    ProgressView()
+                        .tint(.white)
+                } else {
+                    Text(self.remark.markAsRead ? "Mark Unread" : "Mark Read")
+                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                }
             }
             .frame(maxWidth: .infinity)
             .frame(height: 55)
@@ -115,6 +125,12 @@ struct RemarkDetailView: View {
             .offset(y: UIScreen.main.bounds.height - 140)
             .zIndex(10)
             .onTapGesture {
+                self.isMarkButtonClicked = true
+                self.remark.markAsRead.toggle()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    self.isMarkButtonClicked = false
+                    self.presentationMode.wrappedValue.dismiss()
+                }
             }
             
         }

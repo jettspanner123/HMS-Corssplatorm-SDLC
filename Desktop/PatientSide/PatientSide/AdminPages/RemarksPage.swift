@@ -21,17 +21,9 @@ func getInitials(name: String) -> String {
 
 struct RemarksPage: View {
     
-    
-    var remarks: Array<Remarks> = [
-        .init(fromUserId: "abc", fromUserName: "Uddeshya Singh", title: "Bad Food", description: "Hello is the world of hello. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening.", markAsRead: false),
-        .init(fromUserId: "bca", fromUserName: "Vanshika Garg", title: "No Non Veg Food", description: "Hello is the world of hello. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening.", markAsRead: true),
-        .init(fromUserId: "abc1", fromUserName: "Tanishq Biryani", title: "No Biryani Available", description: "Hello is the world of hello. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening.", markAsRead: false),
-        .init(fromUserId: "abc3", fromUserName: "Harshit Bhai", title: "Nurse not good", description: "Hello is the world of hello. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening.", markAsRead: false),
-        .init(fromUserId: "bca4", fromUserName: "Harnoor K", title: "Staff not up to mark", description: "Hello is the world of hello. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening. World is also the hello of the same shit that is happening.", markAsRead: true),
-    ]
-    
-    
     @State var selectedState: Bool = true
+    
+    @EnvironmentObject var appStates: AppStates
     
     var body: some View {
         NavigationStack {
@@ -70,7 +62,7 @@ struct RemarksPage: View {
                                 .clipShape(Capsule())
                                 .shadow(radius: 1)
                                 .onTapGesture {
-                                    withAnimation(.smooth(duration: 0.2)) {
+                                    withAnimation(.smooth) {
                                         self.selectedState = true
                                     }
                                 }
@@ -84,7 +76,7 @@ struct RemarksPage: View {
                                 .clipShape(Capsule())
                                 .shadow(radius: 1)
                                 .onTapGesture {
-                                    withAnimation(.smooth(duration: 0.2)) {
+                                    withAnimation(.smooth) {
                                         self.selectedState = false
                                         
                                     }
@@ -97,12 +89,26 @@ struct RemarksPage: View {
                         SectionHeading(text: "Remarks")
                             .padding(.top, 20)
                         
-                        ForEach(self.remarks, id: \.fromUserId) { remark in
-                            
+                        if self.appStates.remarks.filter({ $0.markAsRead == self.selectedState }).isEmpty {
+                            VStack(spacing: 20) {
+                                Image(systemName: "note.text")
+                                    .resizable()
+                                    .frame(width: 100, height: 100)
+                                    .foregroundStyle(.gray.opacity(0.75))
+                                
+                                Text("No request found.")
+                                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                                    .foregroundStyle(.gray.opacity(0.75))
+                            }
+                            .padding(.top, 100)
+                        }
+                        
+                        ForEach(self.$appStates.remarks, id: \.fromUserId) { $remark in
                             if remark.markAsRead == self.selectedState {
-                                NavigationLink(destination: RemarkDetailView(remark: remark)) {
+                                NavigationLink(destination: RemarkDetailView(remark: $remark)) {
                                     RemarkCard(remark: remark)
                                 }
+                                .transition(.offset(y: UIScreen.main.bounds.height))
                             }
                             
                             

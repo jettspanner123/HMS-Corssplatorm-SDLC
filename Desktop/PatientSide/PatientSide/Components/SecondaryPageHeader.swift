@@ -7,11 +7,15 @@
 
 import SwiftUI
 
+enum SecondaryPageHeaderRepresentable: String {
+    case doctorDetails = "Doctor Details", eventDetails = "Event Details", none = "None"
+}
+
 struct SecondaryPageHeader: View {
     
     var headingText: String
     @Environment(\.presentationMode) var presentationMode
-    var id: String = ""
+    var id: SecondaryPageHeaderRepresentable = .none
     
     var action: () -> Void = {}
     
@@ -37,7 +41,7 @@ struct SecondaryPageHeader: View {
             
             Spacer()
             
-            if self.id == "doctorDetailPage" {
+            if self.id == .doctorDetails {
                 HStack {
                     Image(systemName: "square.and.pencil")
                         .foregroundStyle(.secondaryAccent)
@@ -50,7 +54,6 @@ struct SecondaryPageHeader: View {
                     self.action()
                 }
             }
-            
         }
         .padding(.horizontal, 25)
     }

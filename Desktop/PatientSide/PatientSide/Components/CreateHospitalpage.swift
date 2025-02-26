@@ -11,6 +11,8 @@ import FirebaseFirestore
 
 struct CreateHospitalPage: View {
     
+    @EnvironmentObject var appStates: AppStates
+    
     @State var showErrorMessage: Bool = false
     @State var errorMessage: String = "Name Error!"
     @State var errorDescription: String = "Please insure the username is atleast 8 characters long."
@@ -23,25 +25,14 @@ struct CreateHospitalPage: View {
     @State var currentSpecialisation: String = ""
     @State var hospitalCount: Int = 0
     
-    @State var hospitalId: String = ""
+    
+    @State var showSuccessMessage: Bool = false
+    @State var successMessage: String = ""
+    
+    @State var hospitalId: String? = nil
     
     func assignHospitalId() {
-        let database = Firestore.firestore()
-        
-        database.collection("registers").getDocuments() { (querySnapshot, error) in
-            
-            if let _ = error {
-                
-            }
-            
-            for doc in querySnapshot!.documents {
-                if doc.documentID == "hospitals" {
-                    self.hospitalId = "\(doc.data()["count"] as! Int + 1)"
-                    self.hospitalCount = doc.data()["count"] as! Int + 1
-                }
-            }
-            
-        }
+        self.hospitalId = "\(self.hospitalName.components(separatedBy: .whitespaces).first ?? self.hospitalName)$\(self.appStates.hospitals.count+1)#\(Calendar.current.component(.day, from: Date()))_\(Calendar.current.component(.month, from: Date()))_\(Calendar.current.component(.year, from: Date()))"
         
     }
     
@@ -50,52 +41,76 @@ struct CreateHospitalPage: View {
     
     @Environment(\.presentationMode) var presentationMode
     
+    
+    
     func createHospital() -> Void {
         
         self.isSubmitButtonClicked = true
         
-        if self.hospitalName.isEmpty || self.hospitalLocation.isEmpty || self.hospitalSpecialisations.isEmpty {
+        if self.hospitalName.isEmpty || self.hospitalLocation.isEmpty || self.hospitalSpecialisations.isEmpty || self.hospitalId == nil {
             self.errorMessage = "Every Field Required!"
             self.errorDescription = "Make sure to fill all the required fields correctly."
-            self.showErrorMessage = true
+            self.isSubmitButtonClicked = false
+            withAnimation {
+                self.showErrorMessage = true
+            }
             return
         }
         
+        self.appStates.hospitals.append(.init(hospitalId: self.hospitalId!, hospitalName: self.hospitalName, superadminId: "", location: self.hospitalLocation, speciality: self.hospitalSpecialisations.first!))
         
-        // MARK: Initiating the database
-        let database = Firestore.firestore()
-        
-        
-        // MARK: Uploading the new hospital information
-        
-        let regex = "\(self.hospitalName.components(separatedBy: .whitespaces).first ?? self.hospitalName)$\(self.hospitalId)#\(Calendar.current.component(.day, from: Date()))_\(Calendar.current.component(.month, from: Date()))_\(Calendar.current.component(.year, from: Date()))"
-        let newHospitalRef = database.collection("hospitals").document(regex)
-        let newHospitalData = ["hospitalId": regex, "hospitalName": self.hospitalName, "location": self.hospitalLocation, "speciality": self.hospitalSpecialisations.first!, "allSpeciality": self.hospitalSpecialisations] as [String : Any]
-        
-        newHospitalRef.setData(newHospitalData) { error in
-            if let _ = error {
-                self.errorMessage = "Server Timeout!"
-                self.errorDescription = "Faild to create. Server timout with no responce."
-                self.showErrorMessage = true
-                
-                return
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.isSubmitButtonClicked = false
+            self.hospitalName = ""
+            self.hospitalId = nil
+            self.hospitalLocation = ""
+            self.hospitalSpecialisations = []
+            
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                withAnimation {
+                    self.showSuccessMessage = false
+                }
             }
+
         }
         
-        
-        self.errorMessage = "Success! 🥳"
-        self.errorDescription = ""
-        self.showErrorMessage = true
-        
-        let hospitalCountRef = database.collection("registers").document("hospitals")
-        
-        hospitalCountRef.setData(["count": self.hospitalCount])
-        
-        self.isSubmitButtonClicked = false
+       
     }
     
     var body: some View {
         ZStack(alignment: .top) {
+            
+            
+            // MARK: Success Prompt
+            if self.showSuccessMessage {
+                HStack {
+                    
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 80)
+                .background(AppBackgroundBlur(radius: 10, opaque: false))
+                .background(
+                    LinearGradient(gradient: Gradient(colors: [.black.opacity(0.5), .clear]), startPoint: .top, endPoint: .bottom)
+                )
+                .transition(.opacity)
+                .zIndex(20)
+                
+            }
+            
+            if self.showSuccessMessage {
+                Text(self.successMessage)
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .padding(15)
+                    .background(.appGreen.gradient)
+                    .clipShape(Capsule())
+                    .shadow(radius: 2)
+                    .offset(y: 30)
+                    .transition(.offset(y: -200))
+                    .zIndex(21)
+                
+            }
             
             
             // MARK: Add Specialisation field Text field
@@ -189,21 +204,33 @@ struct CreateHospitalPage: View {
             }
             .zIndex(21)
             
+            
             // MARK: Error Dialog Box
             if self.showErrorMessage {
                 VStack {
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(25)
+                .background(.black.opacity(0.5))
+                .shadow(radius: 1)
+                .zIndex(20)
+                
+            }
+            
+            // MARK: Error Dialog Box
+            if self.showErrorMessage {
+                VStack {
+                    
                     VStack {
                         Text(self.errorMessage)
                             .font(.system(size: 25, weight: .bold, design: .rounded))
                             .foregroundStyle(.secondary)
                         
-                        if !self.errorDescription.isEmpty {
-                            Text(self.errorDescription)
-                                .padding(.vertical, 20)
-                        }
+                        Text(self.errorDescription)
+                            .padding(.vertical, 20)
                         
                         HStack {
-                            Text(self.errorDescription.isEmpty ? "Okay" : "I Understand")
+                            Text("I Understand")
                                 .font(.system(size: 15, weight: .bold, design: .rounded))
                                 .foregroundStyle(.white)
                         }
@@ -212,8 +239,9 @@ struct CreateHospitalPage: View {
                         .background(.appOrange.gradient)
                         .clipShape(.rect(cornerRadius: 15))
                         .onTapGesture {
-                            self.isSubmitButtonClicked = false
-                            self.showErrorMessage = false
+                            withAnimation(.spring(duration: 0.45)) {
+                                self.showErrorMessage = false
+                            }
                         }
                         
                     }
@@ -221,14 +249,14 @@ struct CreateHospitalPage: View {
                     .frame(maxWidth: .infinity)
                     .background(.white)
                     .clipShape(.rect(cornerRadius: 14))
+                    .padding(.horizontal, 25)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(25)
-                .background(.black.opacity(0.5))
-                .shadow(radius: 1)
-                .zIndex(13)
-                
+                .transition(.offset(y: 1000))
+                .zIndex(31)
             }
+            
+            
             
             
             
@@ -313,6 +341,9 @@ struct CreateHospitalPage: View {
                         .padding(.horizontal, 25)
 
                     CustomTextField(text: self.$hospitalName, placeholder: "Name")
+                        .onChange(of: self.hospitalName) {
+                            self.assignHospitalId()
+                        }
                         .overlay {
                             HStack {
                                 Image(systemName: "building.columns.fill")
@@ -400,7 +431,7 @@ struct CreateHospitalPage: View {
                         .padding(.top, 20)
                     
                     HStack {
-                        Text("\(self.hospitalName.components(separatedBy: .whitespaces).first ?? self.hospitalName)$\(self.hospitalId)#\(Calendar.current.component(.day, from: Date()))_\(Calendar.current.component(.month, from: Date()))_\(Calendar.current.component(.year, from: Date()))")
+                        Text(self.hospitalId ?? "None")
                             .font(.system(size: 15,weight: .bold ,design: .rounded))
                             .foregroundStyle(.black.opacity(0.5))
                     }
@@ -416,14 +447,14 @@ struct CreateHospitalPage: View {
                                 .foregroundStyle(.black.opacity(0.5))
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 15)
+                        .padding(.horizontal, 20)
                     }
                     .padding(.horizontal, 25)
 
                     
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.top, 140)
+                .padding(.top, 150)
                 
                 
             }

@@ -68,9 +68,3 @@ struct AppointmentTabView: View {
         .padding(.horizontal, 30)
     }
 }
-
-//#Preview {
-//    @Previewable @State var something: Bool = false
-//    @Previewable @State var user: SendUser = .init(id: "1234", fullName: "Uddeshya Singh", email: "uddeshyasingh12bsci@gmail.com", location: "Patiala, Punjab", phoneNumber: "9875660105", userType: "user")
-//    HomePage(showProfilePage: $something, user: $user)
-//}

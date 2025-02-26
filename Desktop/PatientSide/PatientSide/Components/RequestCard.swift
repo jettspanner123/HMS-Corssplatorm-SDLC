@@ -30,6 +30,7 @@ struct RequestCard: View {
                 Text(self.request.requestTitle)
                     .font(.system(size: 18, weight: .bold, design: .rounded))
                     .foregroundStyle(.gray)
+                    .lineLimit(1)
                 
                 Spacer()
                 
@@ -41,12 +42,13 @@ struct RequestCard: View {
             // MARK: Remark description
             Text(self.request.requestDescription)
                 .foregroundStyle(.black.opacity(0.75))
+                .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
         }
         .frame(maxWidth: .infinity, maxHeight: 100, alignment: .topLeading)
         .padding(20)
-        .background(.white.gradient)
+        .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 15))
         .shadow(radius: 1)
         

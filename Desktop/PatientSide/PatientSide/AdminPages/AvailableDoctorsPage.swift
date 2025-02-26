@@ -13,20 +13,8 @@ struct AvailableDoctorsPage: View {
     // MARK: Search yaha hoga
     @State var searchText: String = ""
     
+    @EnvironmentObject var appStates: AppStates
     
-    // MARK: Example doctors
-    @State var availableDoctors: Array<Doctor> = [
-        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
-        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
-        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
-        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
-        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
-        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
-        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
-        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
-        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
-        .init(doctorId: "123", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "TanishqIsGay", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya Singh", hospitalId: "dskfjdklf", speciality: "Gayology", medicalAcomplishment: "Pride Mastery"),
-    ]
     
     @State var filterAvailableDoctors: Array<Doctor> = []
  
@@ -58,8 +46,8 @@ struct AvailableDoctorsPage: View {
                         
                         // MARK: Top Search Box
                         CustomTextField(text: self.$searchText, placeholder: "Search")
-                            .onChange(of: self.searchText) { newValue in
-                                self.filterAvailableDoctors = self.availableDoctors.filter {
+                            .onChange(of: self.searchText) {
+                                self.filterAvailableDoctors = self.appStates.doctors.filter {
                                     $0.fullName.lowercased().starts(with: self.searchText.lowercased()) || $0.speciality.lowercased().starts(with: self.searchText.lowercased()) || $0.fullName.lowercased().contains(self.searchText.lowercased())
                                 }
                             }
@@ -79,7 +67,7 @@ struct AvailableDoctorsPage: View {
                             .padding(.top, 20)
                         
                         if self.searchText.isEmpty {
-                            ForEach(self.availableDoctors, id: \.doctorId) { doctor in
+                            ForEach(self.appStates.doctors, id: \.doctorId) { doctor in
                                 NavigationLink(destination: DoctorDetailsPage(doctor: doctor)) {
                                     AvailableDoctorCard(doctor: doctor)
                                 }
@@ -147,9 +135,4 @@ struct AvailableDoctorCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 15))
         .shadow(radius: 1)
     }
-}
-
-
-#Preview {
-    AvailableDoctorsPage()
 }

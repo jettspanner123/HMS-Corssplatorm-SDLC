@@ -9,7 +9,21 @@ import SwiftUI
 
 struct RequestDetailPage: View {
     
-    var request: Request
+    @Binding var request: Request
+    @State var isProgress: Bool = false
+    @Environment(\.presentationMode) var presentationMode
+    
+    func handleRequestStatusChange(_ newStatus: RequestOption) {
+        self.isProgress = true
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.request.requestStatus = newStatus
+            self.isProgress = false
+            self.presentationMode.wrappedValue.dismiss()
+        }
+        
+    }
+    
     var body: some View {
         ZStack(alignment: .top) {
             
@@ -64,7 +78,7 @@ struct RequestDetailPage: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(20)
-                    .background(.white.gradient)
+                    .background(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 15))
                     .shadow(radius: 1)
                     
@@ -79,7 +93,7 @@ struct RequestDetailPage: View {
                     Text(self.request.requestTitle)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(15)
-                        .background(.white.gradient)
+                        .background(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 15))
                         .shadow(radius: 1)
                     
@@ -91,7 +105,7 @@ struct RequestDetailPage: View {
                     Text(self.request.requestDescription)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(15)
-                        .background(.white.gradient)
+                        .background(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 15))
                         .shadow(radius: 1)
                 }
@@ -104,45 +118,67 @@ struct RequestDetailPage: View {
                 
                 
                 // MARK: Accept Button
-                HStack {
-                    Image(systemName: "checkmark")
-                        .foregroundStyle(.white)
+                if self.request.requestStatus != .accepted {
+                    HStack {
+                        Image(systemName: "checkmark")
+                            .foregroundStyle(.white)
+                    }
+                    .frame(maxWidth: 65, maxHeight: 65)
+                    .background(.appGreen.gradient)
+                    .clipShape(Circle())
+                    .shadow(radius: 1)
+                    .onTapGesture {
+                        self.handleRequestStatusChange(.accepted)
+                    }
                 }
-                .frame(maxWidth: 65, maxHeight: 65)
-                .background(.green.opacity(0.45).gradient)
-                .clipShape(Circle())
-                .shadow(radius: 1)
                 
                 
                 // MARK: Reject button
-                HStack {
-                    Image(systemName: "xmark")
-                        .foregroundStyle(.white)
+                if self.request.requestStatus != .rejected {
+                    
+                    HStack {
+                        Image(systemName: "xmark")
+                            .foregroundStyle(.white)
+                    }
+                    .frame(maxWidth: 65, maxHeight: 65)
+                    .background(.appRed.gradient)
+                    .clipShape(Circle())
+                    .shadow(radius: 1)
+                    .onTapGesture {
+                        self.handleRequestStatusChange(.rejected)
+                    }
                 }
-                .frame(maxWidth: 65, maxHeight: 65)
-                .background(.red.opacity(0.5).gradient)
-                .clipShape(Circle())
-                .shadow(radius: 1)
                 
                 // MARK: Hold button
-                HStack {
-                    Image(systemName: "hand.raised")
-                        .foregroundStyle(.white)
+                if self.request.requestStatus != .hold {
+                    HStack {
+                        Image(systemName: "hand.raised.fill")
+                            .foregroundStyle(.white)
+                    }
+                    .frame(maxWidth: 65, maxHeight: 65)
+                    .background(.appYellow.gradient)
+                    .clipShape(Circle())
+                    .shadow(radius: 1)
+                    .onTapGesture {
+                        self.handleRequestStatusChange(.hold)
+                    }
                 }
-                .frame(maxWidth: 65, maxHeight: 65)
-                .background(.orange.opacity(0.5).gradient)
-                .clipShape(Circle())
-                .shadow(radius: 1)
+                
                 
                 // MARK: In Progress button
-                HStack {
-                    Image(systemName: "progress.indicator")
-                        .foregroundStyle(.white)
+                if self.request.requestStatus != .pending {
+                    HStack {
+                        Image(systemName: "progress.indicator")
+                            .foregroundStyle(.white)
+                    }
+                    .frame(maxWidth: 65, maxHeight: 65)
+                    .background(.gray.opacity(0.5).gradient)
+                    .clipShape(Circle())
+                    .shadow(radius: 1)
+                    .onTapGesture {
+                        self.handleRequestStatusChange(.pending)
+                    }
                 }
-                .frame(maxWidth: 65, maxHeight: 65)
-                .background(.gray.opacity(0.5).gradient)
-                .clipShape(Circle())
-                .shadow(radius: 1)
                 
             }
             .padding(8)

@@ -10,7 +10,7 @@ import FirebaseFirestore
 
 struct HospitalScreen: View {
     
-    var hospital: Hospital
+    @Binding var hospital: Hospital
     
     @State var doctors: Array<Doctor> = []
     
@@ -42,6 +42,3 @@ struct HospitalScreen: View {
     }
 }
 
-#Preview {
-    HospitalScreen(hospital: .init(hospitalId: "h1", hospitalName: "Neelam", superadminId: "", location: "", speciality: ""))
-}

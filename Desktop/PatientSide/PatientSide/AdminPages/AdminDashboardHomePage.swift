@@ -15,6 +15,7 @@ struct AdminDashboardHomePage: View {
     @State var isDropDownShown: Bool = false
     
     @State var hospitals: Array<Hospital> = []
+    @EnvironmentObject var appStates: AppStates
     
     // MARK: Fetching all the hospitals for the admin
     func fetchHospitals() {
@@ -74,6 +75,7 @@ struct AdminDashboardHomePage: View {
                     }
                     .padding(.horizontal, 20)
                 }
+                .scrollClipDisabled()
                 
                 
                 // MARK: Hospital information grid
@@ -126,17 +128,19 @@ struct AdminDashboardHomePage: View {
                     }
                     
                     // MARK: Leave Requeasts
-                    QuickActionCards(iconName: "text.page", color: .white, textColor: .appOrange, title: "Leaves")
+                    NavigationLink(destination: AdminLeavePage()) {
+                        QuickActionCards(iconName: "text.page", color: .white, textColor: .appOrange, title: "Leaves")
+                    }
                     
                     // MARK: Scheduled Appointment
-                    QuickActionCards(iconName: "text.page", color: .white, textColor: .appOrange, title: "Lineup")
+                    NavigationLink(destination: AdminAppointmentPage()) {
+                        QuickActionCards(iconName: "text.page", color: .white, textColor: .appOrange, title: "Lineup")
+                    }
                     
                     
                     // TODO: Settings
-                    QuickActionCards(iconName: "gear", color: .white, textColor: .appOrange, title: "Settings")
                     
                     // MARK: Records / Progress / Apple ka 14
-                    QuickActionCards(iconName: "star.fill", color: .white, textColor: .appOrange, title: "Records")
                     
                     // MARK: Emergency
                     QuickActionCards(iconName: "heart.fill", color: .white, textColor: .appOrange, title: "Crisis")
@@ -152,9 +156,63 @@ struct AdminDashboardHomePage: View {
                     .padding(.horizontal, 25)
                     .padding(.top, 20)
                 
-                ScrollView {
+                HStack {
+                    VStack(spacing: 0) {
+                        Text(String(self.appStates.events.count))
+                            .font(.system(size: 105, weight: .black, design: .monospaced))
+                            .foregroundStyle(.appOrange.gradient)
+                        
+                        Text("Ongoing Events")
+                            .font(.system(size: 10, weight: .bold, design: .rounded))
+                            .foregroundStyle(.black.opacity(0.5))
+                            .offset(y: -15)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(.white.gradient)
+                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                    .shadow(radius: 1)
+                    
+                    
+                    VStack {
+                        NavigationLink(destination: AddEventsPage()) {
+                            QuickActionCards(iconName: "plus", color: .appOrange, textColor: .white, title: "Event")
+                        }
+                        NavigationLink(destination: ViewEventsPage()) {
+                            QuickActionCards(iconName: "eye.fill", color: .white, textColor: .black.opacity(0.5), title: "See All")
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 25)
+                
+                
+                SectionHeading(text: "Current Ongoing Events")
+                    .padding(.top, 20)
+                    .padding(.horizontal, 25)
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(self.$appStates.events, id: \.eventId) { event in
+                            NavigationLink(destination: EventDetailsPage(event: event)) {
+                                EventCard(event: event)
+                                .frame(width: 275, height: 175, alignment: .topLeading)
+                            }
+                            
+                        }
+                    }
+                    .padding(.horizontal, 25)
                     
                 }
+                .scrollClipDisabled()
+                
+                Text("- That's All -")
+                    .font(.system(size: 16, weight: .light, design: .rounded))
+                    .foregroundStyle(.black.opacity(0.5))
+                    .padding(.vertical, 20)
+                
+                Spacer()
+                    .frame(maxWidth: .infinity, maxHeight: 30)
                 
             }
             .padding(.vertical, 100)
@@ -166,9 +224,93 @@ struct AdminDashboardHomePage: View {
 }
 
 
-//
-//
-//
-//#Preview {
-//    AdminDashboard()
-//}
+
+struct EventCard: View {
+    
+    @Binding var event: Event
+    var imageName: String = ""
+    
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            HStack {
+                
+                
+                // MARK: Image box
+                HStack  {
+                    switch(self.event.eventType) {
+                    case .bloodDonation:
+                        Image(systemName: "drop.fill")
+                            .foregroundStyle(.white)
+                    case .charity:
+                        Image(systemName: "gift.fill")
+                            .foregroundStyle(.white)
+                    case .checkup:
+                        Image(systemName: "stethoscope")
+                            .foregroundStyle(.white)
+                    case .fundRaiser:
+                        Image(systemName: "indianrupeesign")
+                            .foregroundStyle(.white)
+                    case .seminar:
+                        Image(systemName: "bubble.left.fill")
+                            .foregroundStyle(.white)
+                    case .volunteerWork:
+                        Image(systemName: "person.fill")
+                            .foregroundStyle(.white)
+                    }
+                }
+                .padding(10)
+                .background(.appOrange.gradient)
+                .clipShape(Circle())
+                
+                // MARK: Event name and date
+                VStack(alignment: .leading) {
+                    Text(self.event.eventName)
+                        .font(.system(size: 15, weight: .medium, design: .rounded))
+                        .lineLimit(1)
+                        .foregroundStyle(.black.opacity(0.5))
+                    
+                    Text(getHumanRedableDate(from: self.event.date))
+                        .font(.system(size: 12, weight: .regular, design: .rounded))
+                        .foregroundStyle(.black.opacity(0.35))
+                }
+                
+                Spacer()
+                
+                // MARK: Navigation arrow button
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(.black.opacity(0.5))
+                
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+            
+            // MARK: Event description
+            Text(self.event.eventDescription)
+                .font(.system(size: 14, weight: .regular, design: .rounded))
+                .foregroundStyle(.black.opacity(0.5))
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .lineLimit(3)
+                .padding(5)
+            
+            Spacer()
+            
+            // MARK: Event locaiton
+            Text(self.event.location)
+                .font(.system(size: 15, weight: .medium, design: .rounded))
+                .foregroundStyle(.appOrange)
+                .padding(.horizontal, 7)
+        }
+        .padding(20)
+        .background(.white.gradient)
+        .clipShape(RoundedRectangle(cornerRadius: 15))
+        .shadow(radius: 1)
+    }
+}
+
+#Preview {
+    @Previewable @EnvironmentObject var appStates: AppStates
+    AdminDashboardHomePage()
+        .environmentObject(appStates)
+}

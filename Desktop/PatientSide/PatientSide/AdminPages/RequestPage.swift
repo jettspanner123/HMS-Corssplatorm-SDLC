@@ -10,57 +10,7 @@ import SwiftUI
 struct RequestsPage: View {
     
     
-    @State var requests: Array<Request> = [
-        .init(
-            fromUserId: "user123",
-            fromUserName: "Alice Johnson",
-            fromUserType: .patient,
-            requestTitle: "Update Profile",
-            requestDescription: "Change my address and phone number.",
-            requestStatus: .pending,
-            requestType: .update
-        ),
-        .init(
-            fromUserId: "user456",
-            fromUserName: "Dr. Smith",
-            fromUserType: .doctor,
-            requestTitle: "Delete Patient Record",
-            requestDescription: "Remove patient John Doe's record.",
-            requestStatus: .hold,
-            requestType: .delete
-        ),
-        .init(
-            fromUserId: "user789",
-            fromUserName: "Admin User",
-            fromUserType: .admin,
-            requestTitle: "Create New User",
-            requestDescription: "Create a new doctor account.",
-            requestStatus: .accepted,
-            requestType: .create
-        ),
-        .init(
-            fromUserId: "user101",
-            fromUserName: "Jane Doe",
-            fromUserType: .patient,
-            requestTitle: "Forgot Password",
-            requestDescription: "I need to reset my password.",
-            requestStatus: .pending,
-            requestType: .forgotPassword
-        )
-    ]
-    
-    func getRequestOptionFrequency(options: Array<Request>) -> [RequestOption: Int] {
-        
-        var frequencyCounter: Dictionary<RequestOption, Int> = [:]
-        
-        for i in options {
-            frequencyCounter[i.requestStatus, default: 0] += 1
-        }
-        
-        return frequencyCounter
-    }
-    
-    
+    @EnvironmentObject var appStates: AppStates
     @State var selectedRequestOngoinType: RequestOption = .accepted
     
     var requestOngoinOptions: Array<RequestOption> = [.accepted, .rejected, .pending, .hold]
@@ -106,24 +56,43 @@ struct RequestsPage: View {
                                         .clipShape(Capsule())
                                         .shadow(radius: 1)
                                         .onTapGesture {
-                                            self.selectedRequestOngoinType = requestOngoinType
+                                            withAnimation(.smooth){
+                                                self.selectedRequestOngoinType = requestOngoinType
+                                            }
                                         }
                                 }
                             }
                             .padding(.horizontal, 25)
                         }
+                        .scrollClipDisabled()
                         
                         
                         SectionHeading(text: "Request")
                             .padding(.top, 20)
                             .padding(.horizontal, 25)
+                        
+                        if self.appStates.requests.filter({ $0.requestStatus == self.selectedRequestOngoinType }).isEmpty {
+                            VStack(spacing: 20) {
+                                Image(systemName: "note.text")
+                                    .resizable()
+                                    .frame(width: 100, height: 100)
+                                    .foregroundStyle(.gray.opacity(0.75))
+                                
+                                Text("No request found.")
+                                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                                    .foregroundStyle(.gray.opacity(0.75))
+                            }
+                            .padding(.top, 100)
+                        }
+                        
 
-                        ForEach(self.requests, id: \.fromUserId) { request in
+                        ForEach(self.$appStates.requests, id: \.fromUserId) { $request in
                             if self.selectedRequestOngoinType == request.requestStatus {
-                                NavigationLink(destination: RequestDetailPage(request: request)) {
+                                NavigationLink(destination: RequestDetailPage(request: $request)) {
                                     RequestCard(request: request)
                                         .padding(.horizontal, 25)
                                 }
+                                .transition(.offset(y: UIScreen.main.bounds.height))
                             }
                         }
                         

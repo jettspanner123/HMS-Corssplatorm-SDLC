@@ -39,6 +39,7 @@ struct RemarkCard: View {
             Text(remark.description)
                 .foregroundStyle(.black.opacity(0.5))
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .multilineTextAlignment(.leading)
 
         }
         .frame(maxWidth: .infinity, maxHeight: 100, alignment: .topLeading)
