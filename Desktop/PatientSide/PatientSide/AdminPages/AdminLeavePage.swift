@@ -121,6 +121,7 @@ struct AdminLeavePage: View {
 struct LeaveCard: View {
     
     var leave: Leave
+    var wantButtons: Bool = true
     
     
     var body: some View {
@@ -200,31 +201,83 @@ struct LeaveCard: View {
             .frame(maxWidth: .infinity)
             .padding(.top, 10)
             
-            
-            // MARK: Approve button
-            HStack {
-               Text("Approve")
-                    .font(.system(size: 15, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
+            if !self.wantButtons {
+                
+                // MARK: Pending
+                if self.leave.leaveStatus == .pending {
+                    HStack {
+                        Text(self.leave.leaveStatus.rawValue)
+                            .font(.system(size: 15, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 35)
+                    .background(.appYellow.gradient)
+                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                    .shadow(radius: 1)
+                    .padding(.top, 20)
+                }
+                
+                // MARK: Completed
+                if self.leave.leaveStatus == .approved {
+                    HStack {
+                        Text(self.leave.leaveStatus.rawValue)
+                            .font(.system(size: 15, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 35)
+                    .background(.appGreen.gradient)
+                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                    .shadow(radius: 1)
+                    .padding(.top, 20)
+                }
+                
+                if self.leave.leaveStatus == .rejected {
+                    HStack {
+                        Text(self.leave.leaveStatus.rawValue)
+                            .font(.system(size: 15, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 35)
+                    .background(.appRed.gradient)
+                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                    .shadow(radius: 1)
+                    .padding(.top, 20)
+                }
+               
             }
-            .frame(maxWidth: .infinity)
-            .frame(height: 45)
-            .background(.appGreen.gradient)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .shadow(radius: 1)
-            .padding(.top, 20)
             
-            // MARK: Reject button
-            HStack {
-               Text("Reject")
-                    .font(.system(size: 15, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
+            
+            
+            if self.wantButtons {
+                
+                // MARK: Approve button
+                HStack {
+                    Text("Approve")
+                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 45)
+                .background(.appGreen.gradient)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .shadow(radius: 1)
+                .padding(.top, 20)
+                
+                // MARK: Reject button
+                HStack {
+                    Text("Reject")
+                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 45)
+                .background(.appRed.gradient)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .shadow(radius: 1)
             }
-            .frame(maxWidth: .infinity)
-            .frame(height: 45)
-            .background(.appRed.gradient)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .shadow(radius: 1)
         }
         .frame(maxWidth: .infinity)
         .padding(15)

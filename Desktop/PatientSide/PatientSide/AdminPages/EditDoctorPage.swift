@@ -342,7 +342,7 @@ struct InformationListItem: View {
                 .scaleEffect(0.8)
         }
         .frame(maxWidth: .infinity, maxHeight: 35 ,alignment: .leading)
-        
+
     }
 }
 

@@ -134,16 +134,17 @@ struct AdminDashboardHomePage: View {
                     
                     // MARK: Scheduled Appointment
                     NavigationLink(destination: AdminAppointmentPage()) {
-                        QuickActionCards(iconName: "text.page", color: .white, textColor: .appOrange, title: "Lineup")
+                        QuickActionCards(iconName: "text.page", color: .white, textColor: .appOrange, title: "Lineups")
                     }
                     
                     
+                    QuickActionCards(iconName: "heart.fill", color: .white, textColor: .appOrange, title: "Crisis")
+
                     // TODO: Settings
                     
                     // MARK: Records / Progress / Apple ka 14
                     
                     // MARK: Emergency
-                    QuickActionCards(iconName: "heart.fill", color: .white, textColor: .appOrange, title: "Crisis")
                     
                     
                     

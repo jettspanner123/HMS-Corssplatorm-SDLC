@@ -11,12 +11,50 @@ import SwiftUI
 struct PageHeader_t: View {
     
     var text: String
+    
+    var id: String
+    
+    var notificationAction: () -> Void = {}
+    var profileAction: () -> Void = {}
     var body: some View {
         HStack {
             Text(self.text)
                 .font(.system(size: 40, weight: .bold, design: .rounded))
                 .foregroundStyle(.secondaryAccent.gradient)
                 .frame(maxWidth: .infinity, alignment: .leading)
+            
+            Spacer()
+            
+            if self.id == "DoctorHomePage" {
+                
+                // MARK: Notification button
+                HStack {
+                    Image(systemName: "bell.fill")
+                        .foregroundStyle(.secondaryAccent.gradient)
+                }
+                .frame(width: 50, height: 50)
+                .background(.white.gradient)
+                .clipShape(Circle())
+                .shadow(radius: 1)
+                .onTapGesture {
+                    self.notificationAction()
+                }
+               
+                // MARK: Profile button
+                HStack {
+                    Image(systemName: "person.fill")
+                        .foregroundStyle(.secondaryAccent.gradient)
+                }
+                .frame(width: 50, height: 50)
+                .background(.white.gradient)
+                .clipShape(Circle())
+                .shadow(radius: 1)
+                .onTapGesture {
+                    self.profileAction()
+                }
+                
+            }
+            
        }
         .padding(.horizontal, 30)
         .padding(.top, 20)

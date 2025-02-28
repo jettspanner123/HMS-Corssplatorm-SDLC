@@ -4,6 +4,7 @@ struct EventDetailsPage: View {
     
     @Binding var event: Event
     @State var showEditPage: Bool = false
+    var wantEdit: Bool = true
     
     
     var body: some View {
@@ -22,7 +23,7 @@ struct EventDetailsPage: View {
                 .zIndex(11)
                 
                 // MARK: Page heading
-                SecondaryPageHeader(headingText: "Details", id: .doctorDetails) {
+                SecondaryPageHeader(headingText: "Details", id: self.wantEdit ? .doctorDetails : .none) {
                     self.showEditPage = true
                 }
                 .offset(y: 25)

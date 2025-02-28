@@ -21,53 +21,11 @@ func getCurrentDate() -> String {
 
 struct ContentView: View {
     
-    @State var selectedTab: Int = 1
-    @State var showProfilePage: Bool = false
-    @State var showSettingPage: Bool = false
-    
     @Binding var user: SendUser
     
-    @Environment(\.presentationMode) var presentationMode
-    
     var body: some View {
-        NavigationStack {
-            ZStack(alignment: .top) {
-                
-                ProfilePage(showProfilePage: $showProfilePage, user: self.$user)
-                    .zIndex(11)
-                    .offset(y: self.showProfilePage ? 0 : UIScreen.main.bounds.height)
-                
-                ScrollView {
-                    if self.selectedTab == 0 {
-                        HomePage(showProfilePage: $showProfilePage, user: self.$user)
-                    } else {
-//                        SearchPage(showSettingPage: $showSettingPage)
-                        SearchPage(user: self.$user)
-                    }
-                }
-                
-                
-                HStack {
-                    TabViewBar(selectedTab: $selectedTab)
-                        .zIndex(20)
-                    
-                    HStack {
-                        Image(systemName: "xmark")
-                    }
-                    .frame(maxWidth: 65, maxHeight: 65)
-                    .background(.white.gradient)
-                    .clipShape(Circle())
-                    .shadow(radius: 1)
-                    .onTapGesture {
-                        self.presentationMode.wrappedValue.dismiss()
-                    }
-                }
-                .offset(y: UIScreen.main.bounds.height - 180)
-
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(.gray.opacity(0.3))
-        }
+        Text("Helo world")
+       
     }
 }
 

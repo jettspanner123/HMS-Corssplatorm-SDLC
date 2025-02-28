@@ -8,20 +8,40 @@
 import SwiftUI
 import UIKit
 import SwiftData
-import Firebase
 
+import Firebase
 
 class AppStates: ObservableObject {
     
-    
+    private var isFirebaseInitialized = false
+    private var database: Firestore?
     
     @Published var showAddPage: Bool = false
+    
+    private func initializeFirestore() {
+        if !isFirebaseInitialized {
+            database = Firestore.firestore()
+            isFirebaseInitialized = true
+        }
+    }
+    
+    func getFirestore() -> Firestore {
+        initializeFirestore()
+        return database!
+    }
+    
+    
     
     
     @Published var leaves: Array<Leave> = [
         .init(fromDoctorid: "doctor1",  fromDoctorName: "Dr. Uddeshya Singh",leaveDescription: "Need leave because of being sick to the core.", leaveStatus: .pending, from: .now, to: .now.addingTimeInterval(TimeInterval(86400 * 2))),
         .init(fromDoctorid: "doctor2",  fromDoctorName: "Dr. Tanishq Biryani",leaveDescription: "Ghar ja rela hai apun, kyuki babuji ki zami batreli hai.", leaveStatus: .approved, from: .now, to: .now.addingTimeInterval(TimeInterval(86400 * 2))),
         .init(fromDoctorid: "doctor3",  fromDoctorName: "Dr. Vanshika Garg",leaveDescription: "Had too much lassi, going into a overdose, want some quality time for myself.", leaveStatus: .rejected, from: .now, to: .now.addingTimeInterval(TimeInterval(86400 * 2))),
+    ]
+    
+    @Published var emergency: Array<Emergency> = [
+        .init(patientDiagnosys: "Almost Dead", emergencyStatus: .dangerious),
+        .init(patientDiagnosys: "He is gay or mentally sick", emergencyStatus: .critical),
     ]
     
     @Published var appointments: Array<Appointment> = [
@@ -87,7 +107,16 @@ class AppStates: ObservableObject {
     
     @Published var doctors: Array<Doctor> = [
         .init(doctorId: "doctor1", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "Saahil123s", height: 193, weight: 93, bloodGroup: .ap, doctorName: "Dr. Uddeshya Singh", hospitalId: "hospital1", speciality: "Gayology", medicalAcomplishment: "MBBS")
-    ]
+    ] {
+        willSet {
+            for doctor in self.doctors {
+                let doctorDoctumentReference = self.getFirestore().collection("doctors").document(doctor.doctorId)
+                let doctorData: [String: Any] = ["doctorId": doctor.doctorId, "doctorName": doctor.doctorName, "speciality": doctor.speciality, "hospitalName": doctor.hospitalName, "hospitalId": doctor.hospitalId, "doctorHeight": doctor.height, "doctorWeight": doctor.weight, "phoneNumber": doctor.phoneNumber, "medicalAcomplishments": doctor.medicalAcomplishment, "fullName": doctor.fullName, "username": doctor.username]
+                doctorDoctumentReference.setData(doctorData)
+            }
+            
+        }
+    }
     
     @Published var users: Array<SendUser> = [
         .init(id: "user1", fullName: "Tushar Sourav", email: "tushar@gmail.com", location: "Mysuru, Karnataka", phoneNumber: "9875660105", userType: "")
@@ -116,32 +145,34 @@ class AppStates: ObservableObject {
             location: "Central Park, Los Angeles",
             date: Date().addingTimeInterval(86400) // One day from now
         ),
-    
-        .init(
-            eventName: "Wellness Seminar: Mental Health Awareness",
-            eventDescription: "Learn how to take care of your mental health and reduce stress. Speakers include top psychologists.",
-            eventType: .seminar,
-            location: "Health Center, San Francisco",
-            date: Date().addingTimeInterval(86400 * 5) // 5 days from now
-        ),
-    
-        .init(
-            eventName: "Fitness Workshop: Get Fit in 30 Days",
-            eventDescription: "Join our fitness workshop and kickstart your fitness journey with expert trainers. Focus on full-body workouts and nutrition.",
-            eventType: .seminar,
-            location: "Downtown Gym, Chicago",
-            date: Date().addingTimeInterval(86400 * 10) // 10 days from now
-        ),
-    
-        .init(
-            eventName: "Yoga for Beginners",
-            eventDescription: "A peaceful yoga session for beginners. Focus on relaxation, flexibility, and mindfulness.",
-            eventType: .seminar,
-            location: "Yoga Studio, Miami",
-            date: Date().addingTimeInterval(86400 * 20) // 20 days from now
-        )
+        
+            .init(
+                eventName: "Wellness Seminar: Mental Health Awareness",
+                eventDescription: "Learn how to take care of your mental health and reduce stress. Speakers include top psychologists.",
+                eventType: .seminar,
+                location: "Health Center, San Francisco",
+                date: Date().addingTimeInterval(86400 * 5) // 5 days from now
+            ),
+        
+            .init(
+                eventName: "Fitness Workshop: Get Fit in 30 Days",
+                eventDescription: "Join our fitness workshop and kickstart your fitness journey with expert trainers. Focus on full-body workouts and nutrition.",
+                eventType: .seminar,
+                location: "Downtown Gym, Chicago",
+                date: Date().addingTimeInterval(86400 * 10) // 10 days from now
+            ),
+        
+            .init(
+                eventName: "Yoga for Beginners",
+                eventDescription: "A peaceful yoga session for beginners. Focus on relaxation, flexibility, and mindfulness.",
+                eventType: .seminar,
+                location: "Yoga Studio, Miami",
+                date: Date().addingTimeInterval(86400 * 20) // 20 days from now
+            )
     ]
 }
+
+
 
 @main
 struct PatientSideApp: App {
@@ -151,14 +182,21 @@ struct PatientSideApp: App {
     }
     
     var appStates = AppStates()
-    @State var doctor: Doctor = .init(doctorId: "123", hospitalName: "Neelam", fullName: "Uddeshya SIngh", username: "jettspanner123", password: "Saahil123s", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya SIngh", hospitalId: "123", speciality: "Physiotherapist", medicalAcomplishment: "MBBS")
+    @State public var doctor: Doctor = .init(doctorId: "doctor1", hospitalName: "Neelam", fullName: "Uddeshya SIngh", username: "jettspanner123", password: "Saahil123s", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya SIngh", hospitalId: "hospital1", speciality: "Physiotherapist", medicalAcomplishment: "MBBS")
     @State var admin: SendAdmin = .init(adminName: "", hospitalId: "", asminUsername: "", password: "", isSuperAdmin: true, adminId: "")
+    @State var user: SendUser = .init(id: "user1", fullName: "Uddeshya Singh", email: "uddeshya@gmail.com", location: "Patiala, Punjab", phoneNumber: "9875660105", userType: "")
+    
+    
+    
     
     
     
     var body: some Scene {
         WindowGroup {
-            AdminDashboard(admin: self.$admin)
+//            DoctorDashboard(doctor: self.$doctor)
+//            AdminDashboard(admin: self.$admin)
+            
+            PatientDashboard(user: self.$user)
         }
         .environmentObject(appStates)
         

@@ -26,7 +26,7 @@ struct SearchPage: View {
             // MARK: Page header
             
             if !self.isSearching {
-                PageHeader_t(text: "Search")
+                PageHeader_t(text: "Search", id: "")
                     .zIndex(12)
             }
            
@@ -382,12 +382,12 @@ struct DoctorCard: View {
             
             VStack {
                 Text(self.doctor.doctorName)
-                    .font(.system(size: 17, weight: .semibold, design: .rounded))
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
                     .foregroundStyle(.black.opacity(0.5))
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 Text(self.doctor.speciality + " (" + self.doctor.hospitalName + ") ")
-                    .font(.system(size: 14, weight: .regular, design: .rounded))
+                    .font(.system(size: 12, weight: .regular, design: .rounded))
                     .foregroundStyle(.black.opacity(0.5))
                     .frame(maxWidth: .infinity, alignment: .leading)
                 

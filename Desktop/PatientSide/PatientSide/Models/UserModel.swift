@@ -64,6 +64,16 @@ struct SendUser {
     var bloodGroup: BloodGroup = .ap
 }
 
+enum EmergencyStatus: String, Codable, Hashable {
+    case stable = "Stable", abnormal = "Abnormal", dangerious = "Dangerious", critical = "Critical", none = "None"
+}
+
+struct Emergency {
+    var emergencyId: String = UUID().uuidString
+    var patientDiagnosys: String
+    var emergencyStatus: EmergencyStatus
+}
+
 struct SendAdmin {
     var adminName: String
     var hospitalId: String
@@ -118,7 +128,6 @@ struct Leave: Codable, Hashable {
     var leaveStatus: LeaveStatus
     var from: Date
     var to: Date
-    
     
 }
 
@@ -184,7 +193,7 @@ func getDayOnly(_ of: Date) -> String {
 }
 
 enum AppointmentType: String, Codable, Hashable {
-    case upcoming = "Upcoming", failed = "Failed", cancelled = "Cancelled", completed = "Completed"
+    case upcoming = "Upcoming", failed = "Failed", cancelled = "Cancelled", completed = "Completed", all = "All"
 }
 
 struct Appointment: Codable, Hashable {
@@ -196,6 +205,7 @@ struct Appointment: Codable, Hashable {
     var patientId: String
     var patientName: String
     var appointmentType: AppointmentType
+    var isViewedByDoctor: Bool = false
 }
 
 

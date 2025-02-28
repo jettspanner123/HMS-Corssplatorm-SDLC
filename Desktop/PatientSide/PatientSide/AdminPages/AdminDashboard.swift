@@ -3,7 +3,6 @@
 //  PatientSide
 //
 //  Created by Uddeshya Singh on 19/02/25.
-//
 
 import SwiftUI
 
@@ -40,10 +39,6 @@ struct AdminDashboard: View {
                     .zIndex(20)
                     
                 }
-                
-                
-                
-                
                 
                 // MARK: Show add page bottom screen
                 if self.appStates.showAddPage {
@@ -143,8 +138,10 @@ struct AdminDashboard: View {
                 ScrollView(showsIndicators: false) {
                     if self.selectedTab == 0 {
                         AdminDashboardHomePage()
+                            .transition(.blurReplace)
                     } else if self.selectedTab == 1 {
                         AdminDashboardPatientPage()
+                            .transition(.blurReplace)
                     } else if self.selectedTab == 2 {
                         
                     } else if self.selectedTab == 3 {
@@ -169,36 +166,4 @@ struct AdminDashboard: View {
             .background(.gray.opacity(0.3))
         }
     }
-}
-
-struct AdminAddSomethingChoice: View {
-    var image: String
-    var heading: String
-    
-    var body: some View {
-        HStack {
-            Image(systemName: self.image)
-                .foregroundStyle(.appOrange.gradient)
-            
-            Text(self.heading)
-                .font(.system(size: 15, weight: .medium, design: .rounded))
-                .foregroundStyle(.black.opacity(0.5))
-            
-            Spacer()
-            
-            Image(systemName: "chevron.right")
-                .foregroundStyle(.black.opacity(0.5))
-        }
-        .frame(maxWidth: .infinity)
-        .frame(height: 55)
-        .padding(.horizontal, 25)
-        .background(.white.gradient)
-        .clipShape(RoundedRectangle(cornerRadius: 15))
-        .shadow(radius: 1)
-    }
-}
-
-
-#Preview {
-    AdminDashboard(admin: .constant(.init(adminName: "", hospitalId: "", asminUsername: "", password: "", isSuperAdmin: true, adminId: "")))
 }

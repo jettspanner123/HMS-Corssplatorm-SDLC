@@ -12,6 +12,8 @@ struct AppointmentCard: View {
     
     @Binding var appointment: Appointment
     
+    var wantArrow: Bool = true
+    
     var body: some View {
         VStack {
             
@@ -41,12 +43,12 @@ struct AppointmentCard: View {
                         .shadow(radius: 1)
                     
                 } else if self.appointment.appointmentType == .completed {
-                    Text(String(dateDistance)  + " day" + (dateDistance == 1 ? "" : "s"))
+                    Image(systemName: "checkmark.seal.fill")
                         .font(.system(size: 15, weight: .regular, design: .rounded))
                         .foregroundStyle(.white)
                         .frame(maxWidth: 65)
                         .padding(5)
-                        .background(.appOrange.gradient)
+                        .background(.appGreen.gradient)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                         .shadow(radius: 1)
                     
@@ -87,9 +89,10 @@ struct AppointmentCard: View {
                     
                 }
                 
-                
-                Image(systemName: "chevron.right")
-                    .foregroundStyle(.black.opacity(0.5))
+                if self.wantArrow {
+                    Image(systemName: "chevron.right")
+                        .foregroundStyle(.black.opacity(0.5))
+                }
             }
             .frame(maxWidth: .infinity)
             
@@ -106,7 +109,6 @@ struct AppointmentCard: View {
                 .padding(5)
                 .background(.appBackground.opacity(0.5))
                 .clipShape(RoundedRectangle(cornerRadius: 5))
-                .shadow(radius: 1)
                 
                 HStack {
                     Image(systemName: "calendar")

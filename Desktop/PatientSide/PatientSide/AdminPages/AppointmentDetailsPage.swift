@@ -136,12 +136,12 @@ struct PatientCard: View {
             
             VStack {
                 Text(self.patient.fullName)
-                    .font(.system(size: 17, weight: .semibold, design: .rounded))
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
                     .foregroundStyle(.black.opacity(0.5))
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 Text(self.patient.bloodGroup.rawValue)
-                    .font(.system(size: 14, weight: .regular, design: .rounded))
+                    .font(.system(size: 12, weight: .regular, design: .rounded))
                     .foregroundStyle(.black.opacity(0.5))
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -167,30 +167,4 @@ struct PatientCard: View {
         .shadow(radius: 1)
     }
 }
-//#Preview {
-    //
-    //    @Previewable @State var thePatient: SendUser = .init(id: "", fullName: "Uddeshya Singh", email: "", location: "", phoneNumber: "", userType: "")
-    //    VStack {
-    //        PatientCard(patient: $thePatient)
-    //    }
-    //    .frame(maxWidth: .infinity, maxHeight: .infinity)
-    //    .background(.gray.opacity(0.2))
-    
-    //    @Previewable @EnvironmentObject var appStates: AppStates
-    
-//    @Previewable @State var appointment = Appointment(
-//        appointmentDate: Date().addingTimeInterval(86400 * 4), // 2 days from now
-//        appointmentTime: Date().addingTimeInterval(2 * 24 * 60 * 60 + 8 * 60 * 60), // 2 days + 8 hours
-//        doctorId: "doctor1",
-//        doctorName: "Dr. Uddeshya Singh",
-//        patientId: "user1",
-//        patientName: "Tushar Saurav",
-//        appointmentType: .upcoming
-//    )
-//    
-//    
-//    
-//    AppointmentDetailsPage(appointment: $appointment)
-//    //        .environmentObject(appStates)
-//}
-//
+
