@@ -9,9 +9,10 @@ import SwiftUI
 
 struct PatientTabBarView: View {
     
+    @Binding var showEmergencyPage: Bool
     @Binding var selectedTab: Int
     
-    var tabs: Array<(String, Int)> = [("Home", 0), ("Search", 1), ("Something", 2)]
+    var tabs: Array<(String, Int)> = [("Home", 0), ("Search", 1)]
     
     var emergencyAction: () -> Void = {}
     var body: some View {
@@ -67,11 +68,15 @@ struct PatientTabBarView: View {
             }
             .frame(maxWidth: 73, maxHeight: 73)
             .background(
-//                LinearGradient(gradient: Gradient(colors: [.red, .appRed]), startPoint: .top, endPoint: .bottom)
                 .emergency.gradient
             )
             .clipShape(Circle())
             .shadow(radius: 1)
+            .onTapGesture {
+                withAnimation {
+                    self.showEmergencyPage = true
+                }
+            }
         }
         
     }

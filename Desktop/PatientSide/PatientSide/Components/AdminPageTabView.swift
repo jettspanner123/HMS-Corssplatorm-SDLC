@@ -9,14 +9,14 @@ import SwiftUI
 struct AdminTabViewBar: View {
     
     @Binding var selectedTab: Int
-    var tabs: Array<(String, Int)> = [("Home", 0),("Patients", 1), ("Doctors", 2)]
+    var tabs: Array<(String, Int)> = [("Home", 0) ,("Hospitals", 1), ("Doctors", 2)]
     
     var body: some View {
         HStack {
             ForEach(self.tabs, id: \.self.0) { (item, index) in
                 if self.selectedTab == index {
                     HStack {
-                        Image(systemName: index == 0 ? "house.fill" : index == 1 ? "person.fill" : index == 2 ? "plus" : index == 3 ? "stethoscope" : "gear")
+                        Image(systemName: index == 0 ? "house.fill" : index == 1 ? "building.columns.fill" : index == 2 ? "stethoscope" : index == 3 ? "stethoscope" : "gear")
                             .resizable()
                             .frame(width: 20, height: 20)
                             .foregroundStyle(.white.gradient)
@@ -31,7 +31,7 @@ struct AdminTabViewBar: View {
                     }
                 } else  {
                     HStack {
-                        Image(systemName: index == 0 ? "house.fill" : index == 1 ? "person.fill" : index == 2 ? "plus" : index == 3 ? "stethoscope" : "gear")
+                        Image(systemName: index == 0 ? "house.fill" : index == 1 ? "building.columns.fill" : index == 2 ? "stethoscope" : index == 3 ? "stethoscope" : "gear")
                             .resizable()
                             .frame(width: 20, height: 20)
                             .foregroundStyle(.secondaryAccent.gradient)

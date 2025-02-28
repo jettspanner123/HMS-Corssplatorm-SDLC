@@ -66,7 +66,7 @@ struct AdminDashboard: View {
                                 AdminAddSomethingChoice(image: "stethoscope", heading: "Doctor")
                             }
                             
-                            NavigationLink(destination: EmptyView()) {
+                            NavigationLink(destination: AddDepartmentPage()) {
                                 AdminAddSomethingChoice(image: "folder.fill", heading: "Department")
                             }
                             
@@ -140,8 +140,8 @@ struct AdminDashboard: View {
                         AdminDashboardHomePage()
                             .transition(.blurReplace)
                     } else if self.selectedTab == 1 {
-                        AdminDashboardPatientPage()
-                            .transition(.blurReplace)
+//                        AdminDashboardPatientPage()
+//                            .transition(.blurReplace)
                     } else if self.selectedTab == 2 {
                         
                     } else if self.selectedTab == 3 {
@@ -149,10 +149,10 @@ struct AdminDashboard: View {
                     }
                 }
                 
-                
-                AdminTabViewBar(selectedTab: self.$selectedTab)
-                    .offset(y: UIScreen.main.bounds.height - 165)
-                    .zIndex(12)
+//                
+//                AdminTabViewBar(selectedTab: self.$selectedTab)
+//                    .offset(y: UIScreen.main.bounds.height - 165)
+//                    .zIndex(12)
                 
                 // MARK: Blur at the background of tab bar
                 HStack {

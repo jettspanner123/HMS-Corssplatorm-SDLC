@@ -15,12 +15,7 @@ struct DoctorAppointmentPage: View {
     
     @State var selectedAppointment: AppointmentType = .all
     
-    @State var appointments: Array<Appointment> = [
-        .init(appointmentDate: .now.addingTimeInterval(TimeInterval(86400 * 3)), appointmentTime: .now, doctorId: "doctor1", doctorName: "Dr. Uddeshya Singh", patientId: "user1", patientName: "Tushar Sourav", appointmentType: .upcoming),
-        .init(appointmentDate: .now.addingTimeInterval(TimeInterval(86400 * 3)), appointmentTime: .now, doctorId: "doctor1", doctorName: "Dr. Uddeshya Singh", patientId: "user1", patientName: "Tushar Sourav", appointmentType: .upcoming),
-        .init(appointmentDate: .now.addingTimeInterval(TimeInterval(86400 * 3)), appointmentTime: .now, doctorId: "doctor1", doctorName: "Dr. Uddeshya Singh", patientId: "user1", patientName: "Tushar Sourav", appointmentType: .upcoming),
-        .init(appointmentDate: .now, appointmentTime: .now, doctorId: "doctor1", doctorName: "Dr. Uddeshya Singh", patientId: "user1", patientName: "Tushar Sourav", appointmentType: .completed),
-    ]
+    @EnvironmentObject var appStates: AppStates
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -65,7 +60,7 @@ struct DoctorAppointmentPage: View {
                     .padding(.horizontal, 25)
                 
                 
-                if self.appointments.filter({$0.appointmentType == self.selectedAppointment}).isEmpty && self.selectedAppointment != .all {
+                if self.appStates.appointments.filter({$0.appointmentType == self.selectedAppointment}).isEmpty && self.selectedAppointment != .all {
                     VStack(spacing: 20) {
                         Image(systemName: "note.text")
                             .resizable()
@@ -79,7 +74,7 @@ struct DoctorAppointmentPage: View {
                     .padding(.top, 40)
                 }
                 
-                ForEach(self.$appointments, id: \.appointmentId) { $appointment in
+                ForEach(self.$appStates.appointments, id: \.appointmentId) { $appointment in
                     if self.selectedAppointment == .all {
                         NavigationLink(destination: AppointmentDetailsPage(appointment: $appointment)) {
                             AppointmentCard(appointment: $appointment)

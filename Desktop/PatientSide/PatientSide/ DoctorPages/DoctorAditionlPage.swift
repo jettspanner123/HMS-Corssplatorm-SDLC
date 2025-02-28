@@ -28,7 +28,7 @@ struct DoctorAditionlPage: View {
                 
                 ForEach(self.$leaves, id: \.leaveId) { $leave in
                     if leave.fromDoctorid == self.doctor.doctorId {
-                        LeaveCard(leave: leave, wantButtons: false)
+                        LeaveCard(leave: $leave, wantButtons: false)
                             .padding(.horizontal, 25)
                     }
                 }

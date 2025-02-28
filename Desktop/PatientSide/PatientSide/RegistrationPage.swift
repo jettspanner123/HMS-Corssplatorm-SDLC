@@ -29,9 +29,12 @@ struct RegistrationPage: View {
     @State var isAdmin: Bool = false
     @State var isSuperAdmin: Bool = false
     
+    @EnvironmentObject var appStates: AppStates
+    
     
     @State var user: SendUser = .init(id: "", fullName: "", email: "", location: "", phoneNumber: "", userType: "")
     @State var admin: SendAdmin = .init(adminName: "", hospitalId: "", asminUsername: "", password: "", isSuperAdmin: false, adminId: "")
+    @State var doctor: Doctor = .init(doctorId: "", hospitalName: "", fullName: "", username: "", password: "", height: 198, weight: 198, bloodGroup: .ap, doctorName: "", hospitalId: "", speciality: "", medicalAcomplishment: "")
     
     // MARK: Function jisse username and password check ho raha hai and login v ho raha hai
     func performLogin() -> Void {
@@ -58,201 +61,95 @@ struct RegistrationPage: View {
             return
         }
         
-        // MARK: Databse init
-        let database = Firestore.firestore()
         
-        // MARK: Check if super admin
+        
+        // MARK: Super admin
         if self.isSuperAdmin {
-            database.collection("superadmin").getDocuments() { (querySnapshot, error) in
-                
-                if self.superAdminId.isEmpty {
-                    self.errorMessage = "Invalid Admin Id 🥲"
-                    self.errorDescription = "The admin registration fields is empty or the id dosen't exists."
-                    withAnimation(.spring(duration: 0.35)) {
-                        self.showErrorMessage = true
-                    }
+            for admin in self.appStates.admins {
+                if admin.asminUsername == self.username && admin.password == self.password {
+                    self.admin = admin
+                    self.admin.isSuperAdmin = true
                     self.isSubmitButtonClicked = false
+                    self.showSuccessfullLoginDialog = true
                     return
                 }
-                
-                if let _ = error {
-                    self.errorMessage = "Connection Error! 😭"
-                    self.errorDescription = "There was a error while connecting to the database. "
-                    
-                    withAnimation(.spring(duration: 0.35)) {
-                        self.showErrorMessage = true
-                    }
-                    return
-                }
-                
-                let availableSuperAdmins = querySnapshot!.documents.compactMap { doc in
-                    try? doc.data(as: SendSuperAdmin.self)
-                }
-                
-                for superadmin in availableSuperAdmins {
-                    if superadmin.superadminUsername == self.username.lowercased() && superadmin.superadminPassword == self.password {
-                        self.admin = .init(adminName: superadmin.superadminName, hospitalId: "", asminUsername: superadmin.superadminUsername, password: superadmin.superadminPassword, isSuperAdmin: true, adminId: superadmin.superadminId)
-                        self.isSubmitButtonClicked = false
-                        self.showSuccessfullLoginDialog = true
-                        return
-                    }
-                }
-                
-                
-                self.errorMessage = "Invalid Credentials 🥲"
-                self.errorDescription = "Please make sure that that credentials match and are of same ground."
-                
-                withAnimation(.spring(duration: 0.35)) {
-                    self.showErrorMessage = true
-                }
-                self.isSubmitButtonClicked = false
-                return
             }
-        }
-        
-        
-        
-        // MARK: Check if admin
-        if self.isAdmin {
             
-            database.collection("admins").getDocuments() { (querySnapshot, error) in
-                
-                // MARK: Make sure that the admin has entered the id
-                if self.adminId.isEmpty {
-                    self.errorMessage = "Invalid Admin Id 🥲"
-                    self.errorDescription = "The admin registration fields is empty or the id dosen't exists."
-                    
-                    withAnimation(.spring(duration: 0.35)) {
-                        self.showErrorMessage = true
-                    }
-                    self.isSubmitButtonClicked = false
-                    return
-                }
-                
-                // MARK: Handeling errors
-                if let _ = error {
-                    self.errorMessage = "Connection Error! 😭"
-                    self.errorDescription = "There was a error while connecting to the database. "
-                    
-                    withAnimation(.spring(duration: 0.35)) {
-                        self.showErrorMessage = true
-                    }
-                    return
-                }
-                
-                for doc in querySnapshot!.documents {
-                    let data = doc.data()
-                    
-                    let adminUsername = data["username"] as! String
-                    let adminPassword = data["password"] as! String
-                    let adminAdminId = data["adminId"] as! String
-                    
-                    
-                    print(self.username == adminUsername)
-                    print(self.password == adminPassword)
-                    
-                    if self.username == adminUsername && self.password == adminPassword {
-                        let adminFullName = data["fullName"] as! String
-                        let isAdminSuperAdmin = data["isSuperAdmin"] as! Bool
-                        let adminHospitalId = data["hospitalId"] as! String
-                        
-                        
-                        self.admin = .init(adminName: adminFullName, hospitalId: adminHospitalId, asminUsername: adminUsername, password: adminPassword, isSuperAdmin: isAdminSuperAdmin, adminId: adminAdminId)
-                        self.isSubmitButtonClicked = false
-                        self.showSuccessfullLoginDialog = true
-                        return
-                    }
-                }
-                
-                self.errorMessage = "Invalid Credentials 🥲"
-                self.errorDescription = "Please make sure that that credentials match and are of same ground."
-                
-                withAnimation(.spring(duration: 0.35)) {
-                    self.showErrorMessage = true
-                }
-                self.isSubmitButtonClicked = false
+            self.errorMessage = "Account Not Found 🥲"
+            self.errorDescription = "Either the username of password does not match."
+            self.isSubmitButtonClicked = false
+            withAnimation {
+                self.showErrorMessage = true
             }
             return
         }
         
-        // MARK: Check if doctor
-        if self.isDoctor {
-            
-            database.collection("doctors").getDocuments() { (snapshot, error) in
-                
-                // MARK: Handeling errors
-                if let _ = error {
-                    self.errorMessage = "Connection Error! 😭"
-                    self.errorDescription = "There was a error while connecting to the database. "
+        // MARK: Normal admin
+        if self.isAdmin {
+            for admin in self.appStates.admins {
+                print(admin)
+                print(self.username + " - " + self.password)
+                if admin.asminUsername == self.username && admin.password == self.password {
+                    self.admin = admin
+                    self.admin.isSuperAdmin = false
+                    self.isSubmitButtonClicked = false
+                    self.showSuccessfullLoginDialog = true
                     return
                 }
-                
-                for doc in snapshot!.documents {
-                    let data = doc.data()
-                    
-                    let doctorUsername = data["username"] as! String
-                    let doctorPassword = data["password"] as! String
-                    let doctorId = data["doctorId"] as! String
-                    
-                    if self.doctorId == doctorId && self.username == doctorUsername && self.password == doctorPassword {
-                        self.isSubmitButtonClicked = false
-                        self.showSuccessfullLoginDialog = true
-                        return
-                    }
+            }
+            
+            self.errorMessage = "Account Not Found 🥲"
+            self.errorDescription = "Either the username of password does not match."
+            withAnimation {
+                self.showErrorMessage = true
+            }
+            return
+        }
+        
+        // MARK: Doctor
+        if self.isDoctor {
+            for doctor in self.appStates.doctors {
+                if doctor.username == self.username && doctor.password == self.password {
+                    self.doctor = doctor
+                    self.isSubmitButtonClicked = false
+                    self.showSuccessfullLoginDialog = true
+                    return
                 }
-                
-                self.errorMessage = "Invalid Credentials!"
-                self.errorDescription = "Please make suer that the doctorId, username and password matches."
-                
-                withAnimation(.spring(duration: 0.35)) {
-                    self.showErrorMessage = true
-                }
+            }
+            
+            
+            self.errorMessage = "Account Not Found 🥲"
+            self.errorDescription = "Either the username of password does not match."
+            withAnimation {
+                self.showErrorMessage = true
+            }
+            return
+        }
+        
+       // MARK: Patient
+        for patient in self.appStates.users {
+            if patient.email == self.username && patient.password == self.password {
+                self.user = patient
+                self.isSubmitButtonClicked = false
+                self.showSuccessfullLoginDialog = true
                 return
             }
             
-        }
-        
-        // MARK: IF note doctor and if not admin then user.
-        database.collection("users").getDocuments() { (snapshot, error) in
-            if let _ = error {
-                
-            } else {
-                for doc in snapshot!.documents {
-                    let userData = doc.data()
-                    
-                    let email = userData["email"] as! String
-                    let password = userData["password"] as! String
-                    let id = userData["id"] as! String
-                    let fullName = userData["fullName"] as! String
-                    let phoneNumber = userData["phoneNumber"] as! String
-                    let userType = userData["usertype"] as! String
-                    let location = userData["location"] as! String
-                    
-                    
-                    if email == self.username && password == self.password {
-                        self.isSubmitButtonClicked = false
-                        self.user = .init(id: id, fullName: fullName, email: email, location: location, phoneNumber: phoneNumber, userType: userType)
-                        self.showSuccessfullLoginDialog = true
-                        return
-                    }
-                }
-                
-                self.errorMessage = "Invalid Credentials!"
-                self.errorDescription = "Email Id or Password my not be correct!"
-                withAnimation(.spring(duration: 0.35)) {
-                    self.showErrorMessage = true
-                }
+            
+            self.errorMessage = "Account Not Found 🥲"
+            self.errorDescription = "Either the username of password does not match."
+            withAnimation {
+                self.showErrorMessage = true
             }
+            return
         }
         
         self.isSubmitButtonClicked = false
-        
         
         // MARK: Function khatam hai bhai yaha.
     }
     
     // MARK: Username jab change ho raha hai toh ye function call ho raha hai.
-    
     private func onUsernameChange() {
         if self.username.lowercased().starts(with: "doc#") {
             withAnimation() {
@@ -540,20 +437,16 @@ struct RegistrationPage: View {
             }
             .navigationDestination(isPresented: self.$showSuccessfullLoginDialog) {
                 if self.isAdmin || self.isSuperAdmin {
-                    //                    ChooseHospitalPage(admin: self.admin)
-                    //                        .navigationBarBackButtonHidden()
-                    //
                     AdminDashboard(admin: self.$admin)
                         .navigationBarBackButtonHidden()
                 }
                 
                 if self.isDoctor {
-                    EmptyView()
+                    DoctorDashboard(doctor: self.$doctor)
                 }
                 
                 if !self.isAdmin && !self.isDoctor && !self.isSuperAdmin {
-                    ContentView(user: self.$user)
-                        .navigationBarBackButtonHidden()
+                    PatientDashboard(user: self.$user)
                 }
             }
         }

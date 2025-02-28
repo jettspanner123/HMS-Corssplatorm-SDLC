@@ -100,9 +100,9 @@ struct AdminLeavePage: View {
                         .padding(.top, 100)
                     }
                     
-                    ForEach(self.appStates.leaves, id: \.leaveId) { leave in
+                    ForEach(self.$appStates.leaves, id: \.leaveId) { $leave in
                         if leave.leaveStatus == self.isSelectedTab {
-                            LeaveCard(leave: leave)
+                            LeaveCard(leave: $leave)
                                 .transition(.offset(y: UIScreen.main.bounds.height))
                         }
                     }
@@ -120,7 +120,7 @@ struct AdminLeavePage: View {
 
 struct LeaveCard: View {
     
-    var leave: Leave
+    @Binding var leave: Leave
     var wantButtons: Bool = true
     
     
@@ -265,6 +265,11 @@ struct LeaveCard: View {
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .shadow(radius: 1)
                 .padding(.top, 20)
+                .onTapGesture {
+                    withAnimation {
+                        self.leave.leaveStatus = .approved
+                    }
+                }
                 
                 // MARK: Reject button
                 HStack {
@@ -277,6 +282,11 @@ struct LeaveCard: View {
                 .background(.appRed.gradient)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .shadow(radius: 1)
+                .onTapGesture {
+                    withAnimation {
+                        self.leave.leaveStatus = .rejected
+                    }
+                }
             }
         }
         .frame(maxWidth: .infinity)

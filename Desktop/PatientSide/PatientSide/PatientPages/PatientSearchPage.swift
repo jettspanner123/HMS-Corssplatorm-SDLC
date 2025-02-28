@@ -22,12 +22,34 @@ struct PatientSearchPage: View {
         .init(hospitalId: "hospital1", hospitalName: "Neelam Hospital", superadminId: "healthfosys_gulam", location: "Mysurur, Karnataka", speciality: "Gayology")
     ]
     
+    @State var filteredDoctors: Array<Doctor> = []
+    @State var filteredHospitals: Array<Hospital> = []
+    
+    
+    
     var filterOptions: Array<String> = ["All", "Doctors", "Hospitals"]
+    
+    func fetchData() -> Void {
+        for hospital in self.hospitals {
+            if hospital.hospitalName.lowercased().starts(with: self.searchText) || hospital.hospitalName.lowercased().contains(self.searchText) {
+                self.filteredHospitals.append(hospital)
+            }
+        }
+        
+        for doctor in self.doctors {
+            if doctor.doctorName.lowercased().starts(with: self.searchText) || doctor.doctorName.lowercased().contains(self.searchText) {
+                self.filteredDoctors.append(doctor)
+            }
+        }
+    }
     
     var body: some View {
         ZStack {
+            
+            
+            
             VStack {
-               
+                
                 CustomTextField(text: self.$searchText, placeholder: "Search")
                     .overlay {
                         HStack {
@@ -85,37 +107,75 @@ struct PatientSearchPage: View {
                 }
                 .scrollClipDisabled()
                 
-                if self.selectedFilterOption == "All" || self.selectedFilterOption == "Doctors" {
-                    
-                    // MARK: Doctor heading
-                    SectionHeading(text: "Doctors")
-                        .transition(.offset(y: UIScreen.main.bounds.height))
-                        .padding(.top, 20)
-                        .padding(.horizontal, 25)
-                    
-                    ForEach(self.$doctors, id: \.doctorId) { $doctor in
-                        DoctorCard(doctor: doctor)
+                if self.searchText.isEmpty {
+                    if self.selectedFilterOption == "All" || self.selectedFilterOption == "Doctors" {
+                        
+                        // MARK: Doctor heading
+                        SectionHeading(text: "Doctors")
                             .transition(.offset(y: UIScreen.main.bounds.height))
+                            .padding(.top, 20)
                             .padding(.horizontal, 25)
+                        
+                        ForEach(self.$doctors, id: \.doctorId) { $doctor in
+                            NavigationLink(destination: BookAppointmentPage(doctor: $doctor, patient: self.$user)) {
+                                DoctorCard(doctor: doctor)
+                                    .padding(.horizontal, 25)
+                            }
+                            .transition(.offset(y: UIScreen.main.bounds.height))
+                            
+                        }
                     }
-                }
-                
-                if self.selectedFilterOption == "All" || self.selectedFilterOption == "Hospitals" {
-                    SectionHeading(text: "Hospitals")
-                        .transition(.offset(y: UIScreen.main.bounds.height))
-                        .padding(.top, 20)
-                        .padding(.horizontal, 25)
                     
-                    ForEach(self.$hospitals, id: \.hospitalId) { $hospital in
-                        HospitalCard(hospital: $hospital)
+                    if self.selectedFilterOption == "All" || self.selectedFilterOption == "Hospitals" {
+                        SectionHeading(text: "Hospitals")
                             .transition(.offset(y: UIScreen.main.bounds.height))
+                            .padding(.top, 20)
                             .padding(.horizontal, 25)
+                        
+                        ForEach(self.$hospitals, id: \.hospitalId) { $hospital in
+                            NavigationLink(destination: ShowDoctorsHospitalPage(hospital: $hospital, patient: self.$user)) {
+                                HospitalCard(hospital: $hospital)
+                                    .padding(.horizontal, 25)
+                            }
+                            .transition(.offset(y: UIScreen.main.bounds.height))
+                        }
+                    }
+                } else {
+                    
+                    // MARK: Docotrs
+                    SectionHeading(text: "Doctors")
+                        .padding(.horizontal, 25)
+                        .padding(.top, 20)
+                    
+                    ForEach(self.$filteredDoctors, id: \.doctorId) { $doctor in
+                        NavigationLink(destination: BookAppointmentPage(doctor: $doctor, patient: self.$user)) {
+                            DoctorCard(doctor: doctor)
+                                .padding(.horizontal, 25)
+                        }
+                        .transition(.offset(y: UIScreen.main.bounds.height))
+                    }
+                    
+                    
+                    // MARK: Hospitals
+                    SectionHeading(text: "Hospitals")
+                        .padding(.horizontal, 25)
+                        .padding(.top, 20)
+                    
+                    ForEach(self.$filteredHospitals, id: \.hospitalId) { $hospital in
+                        NavigationLink(destination: ShowDoctorsHospitalPage(hospital: $hospital, patient: self.$user)) {
+                            HospitalCard(hospital: $hospital)
+                                .padding(.horizontal, 25)
+                        }
+                        .transition(.offset(y: UIScreen.main.bounds.height))
                     }
                 }
                 
                 
             }
             .padding(.vertical, 100)
+        }
+        .onAppear {
+            self.fetchData()
         }
     }
 }

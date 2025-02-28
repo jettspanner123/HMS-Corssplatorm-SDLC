@@ -13,6 +13,7 @@ struct PageHeader_t: View {
     var text: String
     
     var id: String
+    @Environment(\.presentationMode) var presentationMode
     
     var notificationAction: () -> Void = {}
     var profileAction: () -> Void = {}
@@ -28,8 +29,21 @@ struct PageHeader_t: View {
             if self.id == "DoctorHomePage" {
                 
                 // MARK: Notification button
+//                HStack {
+//                    Image(systemName: "bell.fill")
+//                        .foregroundStyle(.secondaryAccent.gradient)
+//                }
+//                .frame(width: 50, height: 50)
+//                .background(.white.gradient)
+//                .clipShape(Circle())
+//                .shadow(radius: 1)
+//                .opacity(0.5)
+//                .onTapGesture {
+//                    self.notificationAction()
+//                }
+                
                 HStack {
-                    Image(systemName: "bell.fill")
+                    Image(systemName: "door.right.hand.open")
                         .foregroundStyle(.secondaryAccent.gradient)
                 }
                 .frame(width: 50, height: 50)
@@ -37,7 +51,7 @@ struct PageHeader_t: View {
                 .clipShape(Circle())
                 .shadow(radius: 1)
                 .onTapGesture {
-                    self.notificationAction()
+                    self.presentationMode.wrappedValue.dismiss()
                 }
                
                 // MARK: Profile button

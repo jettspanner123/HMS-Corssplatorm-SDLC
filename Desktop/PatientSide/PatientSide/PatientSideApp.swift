@@ -40,8 +40,7 @@ class AppStates: ObservableObject {
     ]
     
     @Published var emergency: Array<Emergency> = [
-        .init(patientDiagnosys: "Almost Dead", emergencyStatus: .dangerious),
-        .init(patientDiagnosys: "He is gay or mentally sick", emergencyStatus: .critical),
+        .init(patientDiagnosys: "Man found laying outside the hospital premisis. Unconscious.", emergencyStatus: .dangerious),
     ]
     
     @Published var appointments: Array<Appointment> = [
@@ -106,7 +105,9 @@ class AppStates: ObservableObject {
     
     
     @Published var doctors: Array<Doctor> = [
-        .init(doctorId: "doctor1", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "Saahil123s", height: 193, weight: 93, bloodGroup: .ap, doctorName: "Dr. Uddeshya Singh", hospitalId: "hospital1", speciality: "Gayology", medicalAcomplishment: "MBBS")
+        .init(doctorId: "doctor1", hospitalName: "Neelam Hospital", fullName: "Uddeshya Singh", username: "doc#jettspanner123", password: "Saahil123s", height: 193, weight: 93, bloodGroup: .ap, doctorName: "Dr. Uddeshya Singh", hospitalId: "hospital1", speciality: "Physiotherapist", medicalAcomplishment: "MBBS"),
+        .init(doctorId: "doctor2", hospitalName: "Gurunanak Hospital", fullName: "Tushar Singh", username: "doc#jettspanner123", password: "Saahil123s", height: 193, weight: 93, bloodGroup: .ap, doctorName: "Dr. Tushar Singh", hospitalId: "hospital2", speciality: "Pediatrician", medicalAcomplishment: "MBBS"),
+        .init(doctorId: "doctor3", hospitalName: "Samrita Hospital", fullName: "Tanishq Singh", username: "doc#jettspanner123", password: "Saahil123s", height: 193, weight: 93, bloodGroup: .op, doctorName: "Dr. Tanishq Biryani", hospitalId: "hospital3", speciality: "Gyaenacology", medicalAcomplishment: "MBBS"),
     ] {
         willSet {
             for doctor in self.doctors {
@@ -119,15 +120,27 @@ class AppStates: ObservableObject {
     }
     
     @Published var users: Array<SendUser> = [
-        .init(id: "user1", fullName: "Tushar Sourav", email: "tushar@gmail.com", location: "Mysuru, Karnataka", phoneNumber: "9875660105", userType: "")
-    ]
+        .init(id: "user1", fullName: "Tushar Sourav", email: "tushar@gmail.com", location: "Mysuru, Karnataka", phoneNumber: "9875660105", userType: "", password: "Tushar123"),
+        .init(id: "user2", fullName: "Tanishq Biryani", email: "tanishq@gmail.com", location: "Patiala, Punjab", phoneNumber: "9650219599", userType: "", password: "Tanishq123"),
+    ] {
+        willSet {
+            for user in self.users {
+                let userDocumentReference = self.getFirestore().collection("users").document(user.id)
+                let userData: [String: Any] = ["id": user.id, "fullName": user.fullName, "email": user.email, "phoneNumber": user.phoneNumber, "password": user.password]
+                userDocumentReference.setData(userData)
+            }
+        }
+    }
     
     @Published var admins: Array<SendAdmin> = [
-        .init(adminName: "Uddeshya Singh", hospitalId: "hospital1", asminUsername: "jettspanner123", password: "Saahil123s", isSuperAdmin: true, adminId: "healthfosys_gulam")
+        .init(adminName: "Uddeshya Singh", hospitalId: "hospital1", asminUsername: "admin#jettspanner123", password: "Saahil123s", isSuperAdmin: false, adminId: "healthfosys_gulam"),
+        .init(adminName: "Uddeshya Singh", hospitalId: "hospital1", asminUsername: "superadmin#jettspanner123", password: "Saahil123s", isSuperAdmin: true, adminId: "healthfosys_gulam")
     ]
     
     @Published var hospitals: Array<Hospital> = [
-        .init(hospitalId: "hospital1", hospitalName: "Neelam Hospital", superadminId: "healthfosys_gulam", location: "Mysurur, Karnataka", speciality: "Gayology")
+        .init(hospitalId: "hospital1", hospitalName: "Neelam Hospital", superadminId: "neelam#2025", location: "Mysurur, Karnataka", speciality: "Physiology"),
+        .init(hospitalId: "hospital2", hospitalName: "Gurunanak Hospital", superadminId: "neelam#2025", location: "Patiala, Punjab", speciality: "Orthodonty"),
+        .init(hospitalId: "hospital3", hospitalName: "Smrita Hospital", superadminId: "healthfosys#2025", location: "Howrah, West Bengal", speciality: "Cardiology"),
     ]
     
     @Published var events: Array<Event> = [
@@ -193,10 +206,11 @@ struct PatientSideApp: App {
     
     var body: some Scene {
         WindowGroup {
+            RegistrationPage()
 //            DoctorDashboard(doctor: self.$doctor)
 //            AdminDashboard(admin: self.$admin)
             
-            PatientDashboard(user: self.$user)
+//            PatientDashboard(user: self.$user)
         }
         .environmentObject(appStates)
         

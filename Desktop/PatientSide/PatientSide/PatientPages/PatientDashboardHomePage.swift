@@ -17,51 +17,7 @@ struct PatientDashboardHomePage: View {
         .all, .upcoming, .completed, .failed, .cancelled
     ]
     
-    @State var appointments: Array<Appointment> = [
-        .init(appointmentDate: .now.addingTimeInterval(TimeInterval(86400 * 3)), appointmentTime: .now, doctorId: "doctor1", doctorName: "Dr. Uddeshya Singh", patientId: "user1", patientName: "Tushar Sourav", appointmentType: .upcoming),
-        .init(appointmentDate: .now, appointmentTime: .now, doctorId: "doctor1", doctorName: "Dr. Uddeshya Singh", patientId: "user1", patientName: "Tushar Sourav", appointmentType: .completed),
-    ]
-    
-    @State var events: Array<Event> = [
-        .init(
-            eventName: "Blood Donation Drive",
-            eventDescription: "Donate blood and help save lives. Join us in this noble cause and be a hero.",
-            eventType: .bloodDonation,
-            location: "City Hospital, New York",
-            date: .now
-        ),
-        .init(
-            eventName: "Free Health Check-Up Camp",
-            eventDescription: "Free blood pressure, blood sugar, and general health check-ups. No appointment required.",
-            eventType: .checkup,
-            location: "Central Park, Los Angeles",
-            date: Date().addingTimeInterval(86400) // One day from now
-        ),
-        
-            .init(
-                eventName: "Wellness Seminar: Mental Health Awareness",
-                eventDescription: "Learn how to take care of your mental health and reduce stress. Speakers include top psychologists.",
-                eventType: .seminar,
-                location: "Health Center, San Francisco",
-                date: Date().addingTimeInterval(86400 * 5) // 5 days from now
-            ),
-        
-            .init(
-                eventName: "Fitness Workshop: Get Fit in 30 Days",
-                eventDescription: "Join our fitness workshop and kickstart your fitness journey with expert trainers. Focus on full-body workouts and nutrition.",
-                eventType: .seminar,
-                location: "Downtown Gym, Chicago",
-                date: Date().addingTimeInterval(86400 * 10) // 10 days from now
-            ),
-        
-            .init(
-                eventName: "Yoga for Beginners",
-                eventDescription: "A peaceful yoga session for beginners. Focus on relaxation, flexibility, and mindfulness.",
-                eventType: .seminar,
-                location: "Yoga Studio, Miami",
-                date: Date().addingTimeInterval(86400 * 20) // 20 days from now
-            )
-    ]
+    @EnvironmentObject var appStates: AppStates
     
     
     var body: some View {
@@ -111,7 +67,7 @@ struct PatientDashboardHomePage: View {
                     .padding(.top, 20)
                     .padding(.horizontal, 25)
                 
-                if self.appointments.filter({ $0.appointmentType == self.selectedAppointmentFilter}).isEmpty && self.selectedAppointmentFilter != .all {
+                if self.appStates.appointments.filter({ $0.appointmentType == self.selectedAppointmentFilter}).isEmpty && self.selectedAppointmentFilter != .all {
                     VStack(spacing: 20) {
                         Image(systemName: "note.text")
                             .resizable()
@@ -125,7 +81,7 @@ struct PatientDashboardHomePage: View {
                     .padding(.top, 40)
                 }
                 
-                ForEach(self.$appointments, id: \.appointmentId) { $appointment in
+                ForEach(self.$appStates.appointments, id: \.appointmentId) { $appointment in
                     if self.selectedAppointmentFilter == .all && self.user.id == appointment.patientId{
                         AppointmentCard(appointment: $appointment, wantArrow: false)
                             .transition(.offset(y: UIScreen.main.bounds.height))
@@ -149,7 +105,7 @@ struct PatientDashboardHomePage: View {
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
-                        ForEach(self.$events, id: \.eventId) { $event in
+                        ForEach(self.$appStates.events, id: \.eventId) { $event in
                             EventCard(event: $event)
                                 .frame(width: 275, height: 175, alignment: .topLeading)
                         }

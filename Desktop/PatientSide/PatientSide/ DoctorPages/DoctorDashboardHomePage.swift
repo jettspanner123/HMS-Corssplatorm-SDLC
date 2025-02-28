@@ -11,17 +11,8 @@ struct DoctorDashboardHomePage: View {
     
     @Binding var doctor: Doctor
     
-    @State var appointments: Array<Appointment> = [
-        .init(appointmentDate: .now.addingTimeInterval(TimeInterval(86400 * 3)), appointmentTime: .now, doctorId: "doctor1", doctorName: "Dr. Uddeshya Singh", patientId: "user1", patientName: "Tushar Sourav", appointmentType: .upcoming),
-        .init(appointmentDate: .now.addingTimeInterval(TimeInterval(86400 * 3)), appointmentTime: .now, doctorId: "doctor1", doctorName: "Dr. Uddeshya Singh", patientId: "user1", patientName: "Tushar Sourav", appointmentType: .upcoming),
-        .init(appointmentDate: .now.addingTimeInterval(TimeInterval(86400 * 3)), appointmentTime: .now, doctorId: "doctor1", doctorName: "Dr. Uddeshya Singh", patientId: "user1", patientName: "Tushar Sourav", appointmentType: .upcoming),
-        .init(appointmentDate: .now, appointmentTime: .now, doctorId: "doctor1", doctorName: "Dr. Uddeshya Singh", patientId: "user1", patientName: "Tushar Sourav", appointmentType: .completed),
-    ]
     
-    @State var emergencies: Array<Emergency> = [
-        .init(patientDiagnosys: "Male in 30s found laying on the beer trunk. He is unresponsive. Maybe intoxicated.", emergencyStatus: .abnormal),
-        .init(patientDiagnosys: "Not so straight man found unconcious at gay parade. Don't know the gender. Don't treat this man.", emergencyStatus: .stable)
-    ]
+    @EnvironmentObject var appStates: AppStates
     
     var body: some View {
         ZStack {
@@ -35,11 +26,11 @@ struct DoctorDashboardHomePage: View {
                         
                         
                         // MARK: Today's appointment
-                        DoctorInformationCard(iconsName: "person.fill", title: "Appointments", color: .appOrange, textColor: .white, bottomText: "Today's Appointment", number: String(self.appointments.count))
+                        DoctorInformationCard(iconsName: "person.fill", title: "Appointments", color: .appOrange, textColor: .white, bottomText: "Today's Appointment", number: String(self.appStates.appointments.count))
                         
-                        let pendingCount = self.appointments.filter({$0.appointmentType == .upcoming}).count
-                        let completedCount = self.appointments.filter({$0.appointmentType == .completed}).count
-                        let failedCount = self.appointments.filter({$0.appointmentType == .failed}).count
+                        let pendingCount = self.appStates.appointments.filter({$0.appointmentType == .upcoming}).count
+                        let completedCount = self.appStates.appointments.filter({$0.appointmentType == .completed}).count
+                        let failedCount = self.appStates.appointments.filter({$0.appointmentType == .failed}).count
                         
                         // MARK: Pending Appointments
                         if pendingCount > 0 {
@@ -65,7 +56,7 @@ struct DoctorDashboardHomePage: View {
                     .padding(.top, 20)
                     .padding(.horizontal, 25)
                 
-                ForEach(self.$emergencies, id: \.emergencyId) { $emergency in
+                ForEach(self.$appStates.emergency, id: \.emergencyId) { $emergency in
                     EmergencyCard(emergency: $emergency)
                         .padding(.horizontal, 25)
                 }
@@ -78,7 +69,7 @@ struct DoctorDashboardHomePage: View {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2)) {
                     
                     NavigationLink(destination: DoctorCrisisPage()) {
-                        QuickActionCards(iconName: "exclamationmark.triangle.fill", color: .appRed, textColor: .white, title: "Crisis")
+                        QuickActionCards(iconName: "exclamationmark.triangle.fill", color: .emergency, textColor: .white, title: "Crisis")
                     }
                     NavigationLink(destination: ApplyLeavePage(doctor: self.$doctor)) {
                         QuickActionCards(iconName: "paperplane.fill", color: .white, textColor: .appOrange, title: "Leave")

@@ -49,7 +49,7 @@ struct EmergencyCard: View  {
         }
         .frame(maxWidth: .infinity, minHeight: 100, alignment: .topLeading)
         .padding(15)
-        .background(.appRed.gradient)
+        .background(.emergency.gradient)
         .clipShape(RoundedRectangle(cornerRadius: 15))
         .shadow(radius: 1)
     }

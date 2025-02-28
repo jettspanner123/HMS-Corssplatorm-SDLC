@@ -9,8 +9,9 @@ import SwiftUI
 
 struct DoctorDashboard: View {
     
-    @State var selectedTab: Int = 2
+    @State var selectedTab: Int = 0
     @State var showProfilePage: Bool = false
+    @State var showNotificationPage: Bool = false
     
     
     @Binding var doctor: Doctor
@@ -36,8 +37,16 @@ struct DoctorDashboard: View {
                         .zIndex(21)
                 }
                 
+                if self.showNotificationPage {
+                    NotificationsPage(showNotificationPage: self.$showNotificationPage, doctor: self.$doctor)
+                }
                 
-                PageHeader_t(text: self.selectedTab == 0 ? "Abode" : self.selectedTab == 1 ? "Appointments" : "Aditionals", id: self.selectedTab == 0 ? "DoctorHomePage" : "", profileAction: {
+                
+                PageHeader_t(text: self.selectedTab == 0 ? "Abode" : self.selectedTab == 1 ? "Appointments" : "Aditionals", id: self.selectedTab == 0 ? "DoctorHomePage" : "", notificationAction: {
+                    withAnimation {
+                        self.showNotificationPage = true
+                    }
+                }, profileAction: {
                     withAnimation {
                         self.showProfilePage = true
                     }
@@ -72,11 +81,17 @@ struct DoctorDashboard: View {
                 .zIndex(11)
                 
             }
-            .background(.gray.opacity(0.2))}
+            .background(.gray.opacity(0.2))
+            .navigationBarBackButtonHidden()
+        }
     }
 }
 
 struct NotificationsPage: View {
+    
+    @Binding var showNotificationPage: Bool
+    @Binding var doctor: Doctor
+    
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
@@ -116,8 +131,8 @@ struct NotificationsPage: View {
 #Preview {
     
     @Previewable @State var doctor: Doctor = .init(doctorId: "doctor1", hospitalName: "Neelam", fullName: "Uddeshya SIngh", username: "doc#jettspanner123", password: "Saahil123s", height: 183, weight: 89, bloodGroup: .abn, doctorName: "Dr. Uddeshya SIngh", hospitalId: "hospital1", speciality: "Physiotherapist", medicalAcomplishment: "MBBS")
-    NotificationsPage()
-//    DoctorDashboard(doctor: $doctor)
-//    DoctorProfile(showProfilePage: Binding.constant(true), doctor: $doctor)
+    NotificationsPage(showNotificationPage: .constant(true), doctor: $doctor)
+    //    DoctorDashboard(doctor: $doctor)
+    //    DoctorProfile(showProfilePage: Binding.constant(true), doctor: $doctor)
     //    DoctorProfileEditPage(doctor: $doctor)
 }

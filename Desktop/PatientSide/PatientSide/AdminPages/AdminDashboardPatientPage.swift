@@ -8,11 +8,28 @@
 import SwiftUI
 
 struct AdminDashboardPatientPage: View {
+    
+    @State var activeSelectedHospital: Bool = true
+    
     var body: some View {
         ZStack {
             VStack {
-                
-                SectionHeading(text: "Quick Statistics")
+                HStack {
+                    Text("Active Hospitals")
+                        .font(.system(size: 15, weight: .regular, design: .default))
+//                        .foregroundStyle(self.activeSelectedHospital ? )
+                        .padding(15)
+                        .background(self.activeSelectedHospital ? .appOrange : .white)
+                        .clipShape(Capsule())
+                        .shadow(radius: 1)
+                    
+                    Text("Active Hospitals")
+                        .font(.system(size: 15, weight: .regular, design: .default))
+                        .padding(15)
+                        .background(self.activeSelectedHospital ? .appOrange : .white)
+                        .clipShape(Capsule())
+                        .shadow(radius: 1)
+                }
             }
             .padding(.vertical, 100)
             .padding(.horizontal, 25)

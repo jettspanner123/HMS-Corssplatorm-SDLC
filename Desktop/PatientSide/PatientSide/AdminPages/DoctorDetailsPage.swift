@@ -95,19 +95,6 @@ struct DoctorDetailsPage: View {
                         .shadow(radius: 1)
                         
                         
-                        // MARK: Patients seen today
-                        HStack {
-                            Text("")
-                        }
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 100)
-                        .padding(20)
-                        .background(
-                            LinearGradient(gradient: Gradient(colors: [.pink, .red]), startPoint: .bottomLeading, endPoint: .topTrailing)
-                        )
-                        .clipShape(RoundedRectangle(cornerRadius: 15))
-                        
-                        
                         // MARK: Patients Pending
                     }
                     

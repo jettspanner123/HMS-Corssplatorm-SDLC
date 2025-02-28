@@ -19,7 +19,7 @@ struct AddPatientPage: View {
     @EnvironmentObject var appStates: AppStates
     
     @State var isGenderOpen: Bool = false
-    var genderOptions: Array<String> = ["Chad 🗿", "Gurl 💅🏻", "LGTV 🤡"]
+    var genderOptions: Array<String> = ["Man", "Woman", "LGBTQ+"]
     
     @State var patientFullName: String = ""
     @State var patientId: String = UUID().uuidString
@@ -499,7 +499,7 @@ struct AddPatientPage: View {
                     
                     
                     
-                    if self.patientGender == "LGTV 🤡" {
+                    if self.patientGender == "LGBTQ+" {
                         
                         SectionHeading(text: "Gender Slider")
                             .padding(.top, 20)

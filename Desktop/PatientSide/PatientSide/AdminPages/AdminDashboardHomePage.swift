@@ -87,25 +87,30 @@ struct AdminDashboardHomePage: View {
                 
                 // MARK: Horizontal scrolling information cards with on click property
                 ScrollView(.horizontal, showsIndicators: false) {
+                    
+                    let patients = self.appStates.users.count
+                    let doctors = self.appStates.doctors.count
+                    let request = self.appStates.requests.count
+                    let remarks = self.appStates.remarks.count
                     HStack {
                         // MARK: Number of patients ( in comparison of the day before )
                         NavigationLink(destination: AdminPagePatientsPage()) {
-                            InformationCard(iconsName: "person.fill", title: "Patients", color: .appOrange, textColor: .white, infoText: 33)
+                            InformationCard(iconsName: "person.fill", title: "Patients", color: .appOrange, textColor: .white, infoText: patients)
                         }
                         
                         // MARK: Available Beds ( with percentage )
                         NavigationLink(destination: AvailableDoctorsPage()) {
-                            InformationCard(iconsName: "stethoscope", title: "Doctors", color: .white, textColor: .appOrange, infoText: 33)
+                            InformationCard(iconsName: "stethoscope", title: "Doctors", color: .white, textColor: .appOrange, infoText: doctors)
                         }
                         
                         // MARK: Doctors Available ( with percentage )
                         NavigationLink(destination: RequestsPage()) {
-                            InformationCard(iconsName: "bed.double.fill", title: "Requests", color: .white, textColor: .appOrange, infoText: 33)
+                            InformationCard(iconsName: "bed.double.fill", title: "Requests", color: .white, textColor: .appOrange, infoText: request)
                         }
                         
                         // MARK: Remarks Page
                         NavigationLink(destination: RemarksPage()) {
-                            InformationCard(iconsName: "bookmark.fill", title: "Remarks", color: .white, textColor: .appOrange, infoText: 33)
+                            InformationCard(iconsName: "bookmark.fill", title: "Remarks", color: .white, textColor: .appOrange, infoText: remarks)
                         }
                         
                     }

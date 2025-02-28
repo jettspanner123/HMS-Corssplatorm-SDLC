@@ -167,7 +167,7 @@ struct AddDepartmentPage: View {
                         self.presentationMode.wrappedValue.dismiss()
                     }
                     
-                    Text("Add Admin")
+                    Text("Add Dept")
                         .font(.system(size: 40, weight: .bold, design: .rounded))
                         .foregroundStyle(.secondaryAccent)
                     
@@ -200,8 +200,10 @@ struct AddDepartmentPage: View {
                 .offset(y: UIScreen.main.bounds.height - 145)
                 .zIndex(10)
                 .onTapGesture {
-                    //                self.handleAddAdmin()
+                    self.createDepartment()
                 }
+                }
+            
                 
                 ScrollView(showsIndicators: false) {
                     VStack {
@@ -258,4 +260,3 @@ struct AddDepartmentPage: View {
             
         }
     }
-}

@@ -32,6 +32,11 @@ struct SignUpPage: View {
     
     @State var user: SendUser = .init(id: "", fullName: "", email: "", location: "", phoneNumber: "", userType: "")
     
+    @State var showSuccessMessage: Bool = false
+    
+    
+    @EnvironmentObject var appStates: AppStates
+    
     
     // MARK: Peform signup backend function
     
@@ -70,35 +75,82 @@ struct SignUpPage: View {
         }
         
         
-        print("Firebase started")
+//        print("Firebase started")
+//        
+//        
+//        let database = Firestore.firestore()
+//        let userId = UUID().uuidString
+//        let addUserReference = database.collection("users").document(userId)
+//        
+//        let userData = ["id": userId, "fullName": self.fullName, "email": self.email, "password": self.password, "phoneNumber": self.phoneNumber, "location": self.location, "usertype": "patient"] as [String : Any]
+//        self.user = .init(id: userId, fullName: self.fullName, email: self.email, location: self.location, phoneNumber: self.phoneNumber, userType: "patient")
+//        
+//        addUserReference.setData(userData) { error in
+//            if let _ = error {
+//                self.errorMessage = "Error Occured!"
+//                self.errorDescription = "Servers busy at the moment! Please try again later."
+//                self.showErrorMessage = true
+//            } else {
+//                self.isSubmitButtonClicked = false
+//                self.isPageChanged = true
+//                print("Firebase Ended")
+//            }
+//        }
+//        
         
+        self.appStates.users.append(.init(id: UUID().uuidString, fullName: self.fullName, email: self.email, location: self.location, phoneNumber: self.phoneNumber, userType: "", password: self.password))
         
-        let database = Firestore.firestore()
-        let userId = UUID().uuidString
-        let addUserReference = database.collection("users").document(userId)
-        
-        let userData = ["id": userId, "fullName": self.fullName, "email": self.email, "password": self.password, "phoneNumber": self.phoneNumber, "location": self.location, "usertype": "patient"] as [String : Any]
-        self.user = .init(id: userId, fullName: self.fullName, email: self.email, location: self.location, phoneNumber: self.phoneNumber, userType: "patient")
-        
-        addUserReference.setData(userData) { error in
-            if let _ = error {
-                self.errorMessage = "Error Occured!"
-                self.errorDescription = "Servers busy at the moment! Please try again later."
-                self.showErrorMessage = true
-            } else {
-                self.isSubmitButtonClicked = false
-                self.isPageChanged = true
-                print("Firebase Ended")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.isSubmitButtonClicked = false
+            
+            withAnimation {
+                self.showSuccessMessage = true
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                withAnimation {
+                    self.showSuccessMessage = false
+                }
+                self.presentationMode.wrappedValue.dismiss()
             }
         }
-        
-        
         
     }
     
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
+                
+                
+                // MARK: Success Prompt
+                if self.showSuccessMessage {
+                    HStack {
+                        
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 80)
+                    .background(AppBackgroundBlur(radius: 10, opaque: false))
+                    .background(
+                        LinearGradient(gradient: Gradient(colors: [.black.opacity(0.5), .clear]), startPoint: .top, endPoint: .bottom)
+                    )
+                    .transition(.opacity)
+                    .zIndex(20)
+                    
+                }
+                
+                if self.showSuccessMessage {
+                    Text("Patient Registered Successfully")
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .padding(15)
+                        .background(.appGreen.gradient)
+                        .clipShape(Capsule())
+                        .shadow(radius: 2)
+                        .offset(y: 30)
+                        .transition(.offset(y: -200))
+                        .zIndex(21)
+                    
+                }
                 
                 
                 
